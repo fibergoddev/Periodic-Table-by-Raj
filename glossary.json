@@ -1,0 +1,8 @@
+{
+  "atomic_mass": "The mass of an atom, typically expressed in atomic mass units (amu). It's approximately the sum of the number of protons and neutrons in the nucleus.",
+  "phase": "The state of matter at Standard Temperature and Pressure (STP): Solid, Liquid, or Gas.",
+  "electronegativity_pauling": "A measure of the tendency of an atom to attract a bonding pair of electrons. The Pauling scale is the most commonly used.",
+  "electron_configuration": "The distribution of electrons of an atom or molecule in atomic or molecular orbitals. It describes where the electrons are located around the nucleus.",
+  "isotopes": "Variants of a particular chemical element which differ in neutron number. All isotopes of a given element have the same number of protons but different numbers of neutrons in each atom.",
+  "abundance": "The percentage of a particular isotope that occurs naturally on Earth compared to all other isotopes of that element."
+}
