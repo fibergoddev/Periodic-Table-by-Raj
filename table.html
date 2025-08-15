@@ -1,0 +1,4688 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="The most advanced, accessible, and scientifically accurate periodic table visualization. Features include 3D atomic models, interactive heatmaps, and comprehensive element data.">
+    <meta name="keywords" content="periodic table, chemistry, interactive, science, education, 3D model, heatmap, element data">
+    <meta name="author" content="Sagar Raj">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="Advanced Periodic Table - Sagar Raj Edition">
+    <meta property="og:description" content="The most comprehensive periodic table visualization with 3D models, heatmaps, and detailed element information.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://periodictable.sagar-raj.com/">
+    <meta property="og:image" content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48dGV4dCB5PSIuOWVtIiBmb250LXNpemU9IjkwIj7Co8KjPC90ZXh0Pjwvc3ZnPg==">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Advanced Periodic Table - Sagar Raj Edition">
+    <meta name="twitter:description" content="The most comprehensive periodic table visualization with 3D models, heatmaps, and detailed element information.">
+    <meta name="twitter:image" content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48dGV4dCB5PSIuOWVtIiBmb250LXNpemU9IjkwIj7Co8KjPC90ZXh0Pjwvc3ZnPg==">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48dGV4dCB5PSIuOWVtIiBmb250LXNpemU9IjkwIj7Co8KjPC90ZXh0Pjwvc3ZnPg==">
+    
+    <!-- Preconnect for Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" as="script">
+    
+    <title>Advanced Periodic Table — Sagar Raj Edition</title>
+    
+    <style>
+        /* --- 1. CSS RESET & ROOT VARIABLES --- */
+        :root {
+            /* Light Theme (Default) */
+            --bg-color: #f0f2f5;
+            --bg-secondary-color: #ffffff;
+            --text-primary-color: #1f2937;
+            --text-secondary-color: #6b7280;
+            --border-color: #d1d5db;
+            --accent-color: #3b82f6;
+            --accent-color-hover: #2563eb;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --glow-color: rgba(59, 130, 246, 0.4);
+            /* Element Group Colors */
+            --c-alkali-metal: #ff6666;
+            --c-alkaline-earth-metal: #ffdead;
+            --c-lanthanide: #ffbfff;
+            --c-actinide: #ff99cc;
+            --c-transition-metal: #ffc0cb;
+            --c-post-transition-metal: #c0c0c0;
+            --c-metalloid: #cccc99;
+            --c-polyatomic-nonmetal: #a0ffa0;
+            --c-diatomic-nonmetal: #a0ffa0;
+            --c-noble-gas: #c0ffff;
+            --c-unknown: #e8e8e8;
+            /* Heatmap Colors */
+            --heatmap-low: #e0f2fe;
+            --heatmap-mid: #bae6fd;
+            --heatmap-high: #0ea5e9;
+            /* Cursor Colors */
+            --cursor-color: #3b82f6;
+            /* Animation Variables */
+            --animation-speed-factor: 1;
+        }
+        /* Dark Theme */
+        .dark-theme {
+            --bg-color: #111827;
+            --bg-secondary-color: #1f2937;
+            --text-primary-color: #f9fafb;
+            --text-secondary-color: #9ca3af;
+            --border-color: #374151;
+            --accent-color: #60a5fa;
+            --accent-color-hover: #3b82f6;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --glow-color: rgba(96, 165, 250, 0.5);
+            --cursor-color: #60a5fa;
+        }
+        /* High Contrast Theme */
+        .high-contrast-theme {
+            --bg-color: #000000;
+            --bg-secondary-color: #1a1a1a;
+            --text-primary-color: #ffffff;
+            --text-secondary-color: #cccccc;
+            --border-color: #888888;
+            --accent-color: #ffff00;
+            --accent-color-hover: #eeee00;
+            --glow-color: rgba(255, 255, 0, 0.6);
+            --c-alkali-metal: #FF5733;
+            --c-alkaline-earth-metal: #FFC300;
+            --c-lanthanide: #DAF7A6;
+            --c-actinide: #FFC0CB;
+            --c-transition-metal: #C70039;
+            --c-post-transition-metal: #900C3F;
+            --c-metalloid: #581845;
+            --c-polyatomic-nonmetal: #00A8CC;
+            --c-diatomic-nonmetal: #00A8CC;
+            --c-noble-gas: #4C0070;
+            --c-unknown: #F0F0F0;
+            --heatmap-low: #000000;
+            --heatmap-mid: #808080;
+            --heatmap-high: #FFFFFF;
+        }
+        /* Reduced Motion Theme */
+        .reduced-motion {
+            --animation-speed-factor: 0;
+        }
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font: inherit;
+            vertical-align: baseline;
+            -webkit-tap-highlight-color: transparent;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            :root {
+                --animation-speed-factor: 0;
+            }
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.5;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        /* --- 2. UTILITIES & KEYFRAMES --- */
+        .hidden { 
+            display: none !important; 
+            visibility: hidden !important;
+            opacity: 0 !important;
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        .visually-hidden-focusable {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        .visually-hidden-focusable:focus {
+            position: static;
+            width: auto;
+            height: auto;
+            margin: 0;
+            overflow: visible;
+            clip: auto;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            background-color: var(--bg-secondary-color);
+            color: var(--text-primary-color);
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+        .btn:focus {
+            outline: 2px solid var(--accent-color);
+            box-shadow: 0 0 0 2px white, 0 0 0 4px var(--accent-color);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 0 5px var(--glow-color), 0 0 10px var(--glow-color); }
+            50% { box-shadow: 0 0 15px var(--glow-color), 0 0 25px var(--glow-color); }
+        }
+        @keyframes neon-grid {
+            from {
+                opacity: 0;
+                transform: scale(0.95) perspective(1000px) rotateX(20deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) perspective(1000px) rotateX(0deg);
+            }
+        }
+        @keyframes particle-float {
+            0% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-10px) translateX(5px); }
+            50% { transform: translateY(-15px) translateX(-5px); }
+            75% { transform: translateY(-5px) translateX(10px); }
+            100% { transform: translateY(0) translateX(0); }
+        }
+        @keyframes rotate-constantly {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        /* --- 3. BACKGROUND ANIMATIONS --- */
+        #background-animations {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0.15;
+        }
+        #background-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #background-animations.particles .particle {
+            display: block;
+        }
+        #background-animations.grid-lines {
+            background-image: 
+                linear-gradient(var(--border-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        #background-animations.nebula {
+            background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+            animation: rotate-constantly 120s linear infinite;
+        }
+        /* --- 4. CUSTOM CURSOR --- */
+        #cursor-dot, 
+        #cursor-outline {
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.3s, transform 0.1s, border-color 0.2s, background-color 0.2s;
+            mix-blend-mode: difference;
+        }
+        #cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--cursor-color);
+            transition: width 0.2s, height 0.2s;
+        }
+        #cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--cursor-color);
+            opacity: 0.6;
+        }
+        #cursor-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        body.cursor-style-magnetic #cursor-outline {
+            transition: transform 0.4s ease-out, border-color 0.2s;
+        }
+        body.cursor-style-particles #cursor-dot {
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle, var(--cursor-color) 0%, transparent 70%);
+        }
+        body.cursor-style-pulse #cursor-dot {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.3); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+        body.custom-cursor-active,
+        body.custom-cursor-active a,
+        body.custom-cursor-active button {
+            cursor: none;
+        }
+        /* --- 5. MAIN LAYOUT & HEADER --- */
+        .container {
+            padding: 1rem;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .title span {
+            font-weight: 400;
+            font-size: 0.6em;
+            color: var(--text-secondary-color);
+            display: block;
+            margin-top: -5px;
+        }
+        .controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: flex-end;
+        }
+        .search-wrapper {
+            position: relative;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+        #search-input {
+            width: 100%;
+            padding: 0.65rem 1rem 0.65rem 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-secondary-color);
+            color: var(--text-primary-color);
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        #search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--glow-color);
+        }
+        .search-wrapper svg {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: var(--text-secondary-color);
+        }
+        .icon-button {
+            background-color: var(--bg-secondary-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, box-shadow 0.2s, color 0.2s;
+            text-decoration: none;
+            color: var(--text-primary-color);
+            position: relative;
+        }
+        .icon-button:hover {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+        .icon-button:focus {
+            outline: 2px solid var(--accent-color);
+            box-shadow: 0 0 0 2px white, 0 0 0 4px var(--accent-color);
+        }
+        .icon-button svg {
+            width: 24px;
+            height: 24px;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: bold;
+        }
+        /* --- 6. FILTERS & CONTROLS PANEL --- */
+        #advanced-controls-panel {
+            background-color: var(--bg-secondary-color);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            animation: fadeIn 0.5s ease;
+            overflow: hidden;
+        }
+        .control-section {
+            margin-bottom: 1.5rem;
+        }
+        .control-section:last-child {
+            margin-bottom: 0;
+        }
+        .control-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .control-section h3 svg {
+            width: 16px;
+            height: 16px;
+        }
+        .control-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .control-chip {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+            user-select: none;
+            position: relative;
+        }
+        .control-chip.active {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+        .control-chip:hover:not(.active) {
+            background-color: var(--bg-color);
+        }
+        .control-chip:focus {
+            outline: 2px solid var(--accent-color);
+            box-shadow: 0 0 0 2px white, 0 0 0 4px var(--accent-color);
+        }
+        #heatmap-legend {
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            transition: opacity 0.3s;
+            opacity: 0;
+        }
+        #heatmap-legend.visible {
+            opacity: 1;
+        }
+        #heatmap-gradient {
+            flex-grow: 1;
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(to right, var(--heatmap-low), var(--heatmap-high));
+        }
+        .customization-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 0.5rem 1rem;
+            align-items: center;
+        }
+        .customization-grid label {
+            font-weight: 500;
+        }
+        input[type="color"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 40px;
+            height: 40px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+        }
+        /* --- 7. PERIODIC TABLE GRID --- */
+        #periodic-table-container {
+            overflow-x: auto;
+            padding: 1rem 0;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+        }
+        #periodic-table-grid {
+            display: grid;
+            grid-template-columns: repeat(18, minmax(65px, 1fr));
+            grid-template-rows: repeat(10, minmax(65px, 1fr));
+            gap: 5px;
+            margin: 0 auto;
+            width: fit-content;
+            animation: neon-grid calc(0.8s * var(--animation-speed-factor)) ease-out forwards;
+            transform-origin: center center;
+            padding: 10px;
+        }
+        .element-tile {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+            background-color: var(--bg-secondary-color);
+            opacity: 0;
+            animation: slideInUp calc(0.5s * var(--animation-speed-factor)) ease forwards;
+        }
+        .element-tile:hover {
+            transform: scale(1.1);
+            z-index: 10;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+        .element-tile:focus {
+            outline: 2px solid var(--accent-color);
+            box-shadow: 0 0 0 2px white, 0 0 0 4px var(--accent-color);
+        }
+        .element-tile.filtered-out {
+            opacity: 0.2;
+            pointer-events: none;
+        }
+        .element-tile.highlight {
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 0 15px var(--glow-color);
+            animation: glow-pulse 1.5s infinite;
+        }
+        .element-tile .atomic-number {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            font-size: 0.7em;
+            font-weight: 500;
+            color: var(--text-secondary-color);
+        }
+        .element-tile .symbol {
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+        .element-tile .name {
+            font-size: 0.65em;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            padding: 0 2px;
+        }
+        .element-tile .atomic-mass {
+            font-size: 0.6em;
+            color: var(--text-secondary-color);
+        }
+        /* Long form view styles */
+        #periodic-table-grid.long-form {
+            grid-template-columns: repeat(32, minmax(50px, 1fr));
+            grid-template-rows: repeat(7, minmax(50px, 1fr));
+        }
+        #periodic-table-grid.long-form .placeholder {
+            display: none;
+        }
+        /* --- 8. MODALS (INFO, 3D, GLOSSARY) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.visible .modal-content {
+            transform: scale(1);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-color);
+            z-index: 1;
+        }
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-secondary-color);
+            transition: color 0.2s;
+            padding: 0.25rem;
+            line-height: 1;
+        }
+        .modal-close:hover {
+            color: var(--text-primary-color);
+        }
+        .modal-close:focus {
+            outline: 2px solid var(--accent-color);
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px white, 0 0 0 4px var(--accent-color);
+        }
+        .modal-body {
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        .property-item {
+            background-color: var(--bg-secondary-color);
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .property-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary-color);
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+        .property-value {
+            font-size: 1rem;
+            font-weight: 500;
+            word-wrap: break-word;
+        }
+        .summary-box {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            background-color: var(--bg-secondary-color);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+        .summary-symbol {
+            font-size: 5rem;
+            font-weight: 700;
+            line-height: 1;
+            min-width: 100px;
+            text-align: center;
+        }
+        .summary-details {
+            flex-grow: 1;
+        }
+        .summary-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        .summary-category {
+            font-size: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            display: inline-block;
+            color: #111;
+        }
+        .modal-section {
+            grid-column: 1 / -1;
+        }
+        .modal-section h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        .glossary-term {
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            cursor: help;
+            color: var(--accent-color);
+            transition: color 0.2s;
+        }
+        .glossary-term:hover {
+            color: var(--accent-color-hover);
+        }
+        #d-modal .modal-body {
+            padding: 0;
+            grid-template-columns: 1fr;
+            max-height: 90vh;
+        }
+        #d-canvas-container {
+            width: 100%;
+            height: 500px;
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        #d-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        #d-controls {
+            padding: 1rem;
+            background-color: var(--bg-secondary-color);
+            border-top: 1px solid var(--border-color);
+        }
+        /* --- 9. FOOTER & ABOUT SECTION --- */
+        .footer {
+            text-align: center;
+            padding: 2rem 1rem 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary-color);
+        }
+        .footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        /* --- 10. RESPONSIVENESS --- */
+        @media (max-width: 1200px) {
+            #periodic-table-grid {
+                grid-template-columns: repeat(18, minmax(50px, 1fr));
+                grid-template-rows: repeat(10, minmax(50px, 1fr));
+                gap: 4px;
+            }
+        }
+        @media (max-width: 900px) {
+            #periodic-table-grid {
+                grid-template-columns: repeat(18, minmax(40px, 1fr));
+                grid-template-rows: repeat(10, minmax(40px, 1fr));
+                gap: 3px;
+            }
+            .element-tile .symbol { font-size: 1.2em; }
+            .element-tile .name, .element-tile .atomic-mass { display: none; }
+        }
+        @media (max-width: 768px) {
+            .header { flex-direction: column; align-items: stretch; }
+            .controls { justify-content: space-between; }
+            .search-wrapper { max-width: none; }
+            .modal-content { width: 95%; max-height: 95vh; }
+            .summary-box { flex-direction: column; text-align: center; }
+            .summary-symbol { font-size: 3.5rem; }
+        }
+        @media (max-width: 640px) {
+            #periodic-table-grid {
+                grid-template-columns: repeat(9, 1fr);
+                grid-template-rows: auto;
+                gap: 5px;
+            }
+            .element-tile {
+                grid-column: auto !important;
+                grid-row: auto !important;
+            }
+            .lanthanide-actinide-placeholder, .period-label, .group-label {
+                display: none;
+            }
+            .element-tile .name, .element-tile .atomic-mass { display: block; }
+        }
+        @media (max-width: 480px) {
+            .control-chip {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.75rem;
+            }
+            .element-tile {
+                padding: 2px;
+            }
+            .element-tile .symbol {
+                font-size: 1.1em;
+            }
+        }
+        /* --- 11. PRINT STYLES --- */
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .controls, .header svg, .icon-button, #advanced-controls-panel, .modal-close {
+                display: none !important;
+            }
+            #periodic-table-grid {
+                transform: none !important;
+                animation: none !important;
+                width: 100% !important;
+                margin: 0 auto !important;
+            }
+            .element-tile {
+                opacity: 1 !important;
+                animation: none !important;
+                transform: scale(1) !important;
+                box-shadow: none !important;
+                border: 1px solid #000 !important;
+            }
+            .element-tile:hover {
+                transform: scale(1) !important;
+                box-shadow: none !important;
+            }
+            .modal-overlay {
+                display: none !important;
+            }
+            .footer {
+                page-break-before: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animations -->
+    <div id="background-animations" class="particles">
+        <canvas id="background-canvas"></canvas>
+    </div>
+    
+    <!-- Custom Cursor -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-outline"></div>
+    <canvas id="cursor-particles"></canvas>
+    
+    <div class="container">
+        <!-- Header: Title, Search, Controls -->
+        <header class="header">
+            <h1 class="title">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.755 0-5.455.232-8.083.678-1.131.178-1.936 1.108-1.936 2.192v1.044a48.36 48.36 0 0111.917 2.202 48.212 48.212 0 013.306.668M9 16.5v.75a3 3 0 11-6 0v-.75m6 0v.75a3 3 0 106 0v-.75m-3-15v.008c0 .07 0 .232.038.456.07.427.22 1.316.58 2.819.768 3.115 1.92 7.447 3.28 11.5 1.186 3.604 2.538 6.465 3.28 7.692.714 1.196 1.07 1.638 1.305 1.896.24.263.597.396 1.102.396.553 0 .987-.158 1.331-.428.337-.266.566-.663.756-1.05.19-.388.318-.848.443-1.388.247-1.068.455-2.357.645-3.99C20.16 12.345 21 9.355 21 6.975a4.836 4.836 0 00-1.875-3.975L12 0z" />
+                </svg>
+                Periodic Table
+                <span>Sagar Raj Edition</span>
+            </h1>
+            <div class="controls">
+                <div class="search-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                    <input type="text" id="search-input" placeholder="Search by name, symbol, or number..." aria-label="Search elements">
+                    <div class="visually-hidden-focusable" id="search-results-count" aria-live="polite"></div>
+                </div>
+                <button id="toggle-controls-btn" class="icon-button" aria-expanded="false" aria-label="Show Advanced Controls">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.572a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+                    </svg>
+                </button>
+                <button id="theme-switcher" class="icon-button" aria-label="Switch Theme">
+                    <!-- SVG will be injected by JS -->
+                </button>
+                <button id="cursor-toggle" class="icon-button" aria-label="Toggle Custom Cursor">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
+                    </svg>
+                </button>
+                <button id="cursor-style-toggle" class="icon-button" aria-label="Change Cursor Style">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                </button>
+                <button id="lab-btn" class="icon-button" aria-label="Open Chemistry Lab">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.755 0-5.455.232-8.083.678-1.131.178-1.936 1.108-1.936 2.192v1.044a48.36 48.36 0 0111.917 2.202 48.212 48.212 0 013.306.668M9 16.5v.75a3 3 0 11-6 0v-.75m6 0v.75a3 3 0 106 0v-.75m-3-15v.008c0 .07 0 .232.038.456.07.427.22 1.316.58 2.819.768 3.115 1.92 7.447 3.28 11.5 1.186 3.604 2.538 6.465 3.28 7.692.714 1.196 1.07 1.638 1.305 1.896.24.263.597.396 1.102.396.553 0 .987-.158 1.331-.428.337-.266.566-.663.756-1.05.19-.388.318-.848.443-1.388.247-1.068.455-2.357.645-3.99C20.16 12.345 21 9.355 21 6.975a4.836 4.836 0 00-1.875-3.975L12 0z" />
+                    </svg>
+                </button>
+                <button id="toggle-view-btn" class="icon-button" aria-label="Toggle View">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+                    </svg>
+                </button>
+                <button id="print-btn" class="icon-button" aria-label="Print Table">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096.24.03.48.062.72.096m.72-.096a43.31 43.31 0 0110.72 0c.24-.03.48-.062.72-.096m-11.44 0c.24.03.48.062.72.096M9.75 15.75c.023.032.046.063.068.095.079.113.16.224.242.334.319.426.658.848 1.017 1.265.36.417.739.829 1.132 1.234a43.3 43.3 0 009.436-4.691m-11.068.74c.24.033.48.066.72.099m-2.22-.1a51.478 51.478 0 01-2.22-.1c-.24-.03-.48-.062-.72-.096m18.72.96c.24.03.48.062.72.096m-2.94-1.458c.24.03.48.062.72.096m-2.22-.1c.24.03.48.062.72.096m-2.94-1.458c.24.03.48.062.72.096M1.5 10.5h21M1.5 15h21M1.5 19.5h21M1.5 4.5h21M21 19.5l-2.73-18M3 19.5l2.73-18M12 4.5l-.01 15M12 19.5l.01-15" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Advanced Controls Panel -->
+        <section id="advanced-controls-panel" class="hidden">
+            <div class="control-section">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.572a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+                    </svg>
+                    Filter by Category
+                </h3>
+                <div id="category-filters" class="control-chips">
+                    <!-- Chips generated by JS -->
+                </div>
+            </div>
+            <div class="control-section">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 2.909v13.982m-4.773-4.773l7.16 7.16m-7.16 0l7.16-7.16" />
+                    </svg>
+                    Filter by State at STP
+                </h3>
+                <div id="state-filters" class="control-chips">
+                    <!-- Chips generated by JS -->
+                </div>
+            </div>
+            <div class="control-section">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3.343 19.5h17.314M12 2.909v13.982m-4.773-4.773l7.16 7.16m-7.16 0l7.16-7.16" />
+                    </svg>
+                    Heatmap Visualization
+                </h3>
+                <div id="heatmap-controls" class="control-chips">
+                    <div class="control-chip" data-heatmap-type="atomic_mass">Atomic Mass</div>
+                    <div class="control-chip" data-heatmap-type="density">Density</div>
+                    <div class="control-chip" data-heatmap-type="atomic_radius">Atomic Radius</div>
+                    <div class="control-chip" data-heatmap-type="electronegativity_pauling">Electronegativity</div>
+                    <div class="control-chip" data-heatmap-type="melting_point">Melting Point</div>
+                    <div class="control-chip" data-heatmap-type="boiling_point">Boiling Point</div>
+                    <div class="control-chip" data-heatmap-type="clear">Clear</div>
+                </div>
+                <div id="heatmap-legend" class="hidden">
+                    <span>Low</span>
+                    <div id="heatmap-gradient"></div>
+                    <span>High</span>
+                </div>
+            </div>
+            <div class="control-section">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 11.25l3 3m0 0l3-3m-3 3V8.75" />
+                    </svg>
+                    Background Animation
+                </h3>
+                <div id="bg-animation-controls" class="control-chips">
+                    <div class="control-chip active" data-bg-anim="off">Off</div>
+                    <div class="control-chip" data-bg-anim="particles">Particles</div>
+                    <div class="control-chip" data-bg-anim="grid-lines">Grid</div>
+                    <div class="control-chip" data-bg-anim="nebula">Nebula</div>
+                </div>
+            </div>
+            <div class="control-section">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 11.25l3 3m0 0l3-3m-3 3V8.75" />
+                    </svg>
+                    Customization
+                </h3>
+                <div class="customization-grid">
+                    <label for="cursor-color-picker">Cursor Color:</label>
+                    <input type="color" id="cursor-color-picker" value="#3b82f6">
+                    
+                    <label for="accent-color-picker">Accent Color:</label>
+                    <input type="color" id="accent-color-picker" value="#3b82f6">
+                    
+                    <label for="animation-speed">Animation Speed:</label>
+                    <input type="range" id="animation-speed" min="0" max="100" value="100">
+                </div>
+            </div>
+        </section>
+        
+        <!-- Periodic Table -->
+        <main id="periodic-table-container">
+            <div id="periodic-table-grid">
+                <!-- Elements will be injected by JS -->
+            </div>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Crafted by <a href="https://github.com/sagar-raj-bro" target="_blank" rel="noopener noreferrer">Sagar Raj</a>. Data sourced from IUPAC and public scientific resources.</p>
+            <p><small>Last updated: October 2023 | <a href="#glossary-modal" id="open-glossary-btn">Glossary</a></small></p>
+        </footer>
+    </div>
+    
+    <!-- Element Detail Modal -->
+    <div id="info-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 id="info-modal-title" class="modal-title">Element Details</h2>
+                <button class="modal-close" aria-label="Close modal">&times;</button>
+            </header>
+            <div class="modal-body" id="info-modal-body">
+                <!-- Content will be injected by JS -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 3D Atomic Model Modal -->
+    <div id="d-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="d-modal-title">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 id="d-modal-title" class="modal-title">3D Atomic Model</h2>
+                <button class="modal-close" aria-label="Close modal">&times;</button>
+            </header>
+            <div id="d-canvas-container">
+                <canvas id="d-canvas"></canvas>
+            </div>
+            <div id="d-controls">
+                <div class="control-chips">
+                    <div class="control-chip active" data-model-type="bohr">Bohr Model</div>
+                    <div class="control-chip" data-model-type="cloud">Electron Cloud</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Glossary Modal -->
+    <div id="glossary-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="glossary-modal-title">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 id="glossary-modal-title" class="modal-title">Glossary of Terms</h2>
+                <button class="modal-close" aria-label="Close modal">&times;</button>
+            </header>
+            <div class="modal-body" id="glossary-modal-body">
+                <!-- Content will be injected by JS -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    // --- 0. IMMEDIATE THEME LOGIC (Prevents FOUC) ---
+    (function() {
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('periodic-table-theme') || 'auto';
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        // Apply the appropriate theme class
+        if (savedTheme === 'dark' || (savedTheme === 'auto' && systemPrefersDark)) {
+            document.documentElement.classList.add('dark-theme');
+        } else if (savedTheme === 'high-contrast') {
+            document.documentElement.classList.add('high-contrast-theme');
+        }
+        
+        // Check for reduced motion preference
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.documentElement.classList.add('reduced-motion');
+        }
+    })();
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- 1. EMBEDDED DATA (Directly using your format) ---
+        const elementsData = [
+            {
+                "name": "Hydrogen",
+                "atomic_number": 1,
+                "symbol": "H",
+                "atomic_mass": 1.008,
+                "category": "diatomic nonmetal",
+                "phase": "Gas",
+                "xpos": 1,
+                "ypos": 1,
+                "electron_configuration": "1s¹",
+                "electronegativity_pauling": 2.2,
+                "isotopes": [
+                    {
+                        "mass": 1,
+                        "abundance": "99.985%"
+                    },
+                    {
+                        "mass": 2,
+                        "abundance": "0.015%"
+                    },
+                    {
+                        "mass": 3,
+                        "abundance": "trace"
+                    }
+                ]
+            },
+            {
+                "name": "Helium",
+                "atomic_number": 2,
+                "symbol": "He",
+                "atomic_mass": 4.002602,
+                "category": "noble gas",
+                "phase": "Gas",
+                "xpos": 18,
+                "ypos": 1,
+                "electron_configuration": "1s²",
+                "electronegativity_pauling": null,
+                "isotopes": [
+                    {
+                        "mass": 3,
+                        "abundance": "0.000137%"
+                    },
+                    {
+                        "mass": 4,
+                        "abundance": "99.999863%"
+                    }
+                ]
+            },
+            {
+                "name": "Lithium",
+                "atomic_number": 3,
+                "symbol": "Li",
+                "atomic_mass": 6.94,
+                "category": "alkali metal",
+                "phase": "Solid",
+                "xpos": 1,
+                "ypos": 2,
+                "electron_configuration": "[He] 2s¹",
+                "electronegativity_pauling": 0.98,
+                "isotopes": [
+                    {
+                        "mass": 6,
+                        "abundance": "7.59%"
+                    },
+                    {
+                        "mass": 7,
+                        "abundance": "92.41%"
+                    }
+                ]
+            },
+            {
+                "name": "Beryllium",
+                "atomic_number": 4,
+                "symbol": "Be",
+                "atomic_mass": 9.0121831,
+                "category": "alkaline earth metal",
+                "phase": "Solid",
+                "xpos": 2,
+                "ypos": 2,
+                "electron_configuration": "[He] 2s²",
+                "electronegativity_pauling": 1.57,
+                "isotopes": [
+                    {
+                        "mass": 9,
+                        "abundance": "100%"
+                    }
+                ]
+            },
+            {
+                "name": "Boron",
+                "atomic_number": 5,
+                "symbol": "B",
+                "atomic_mass": 10.81,
+                "category": "metalloid",
+                "phase": "Solid",
+                "xpos": 13,
+                "ypos": 2,
+                "electron_configuration": "[He] 2s² 2p¹",
+                "electronegativity_pauling": 2.04,
+                "isotopes": [
+                    {
+                        "mass": 10,
+                        "abundance": "19.9%"
+                    },
+                    {
+                        "mass": 11,
+                        "abundance": "80.1%"
+                    }
+                ]
+            },
+            {
+                "name": "Carbon",
+                "atomic_number": 6,
+                "symbol": "C",
+                "atomic_mass": 12.011,
+                "category": "polyatomic nonmetal",
+                "phase": "Solid",
+                "xpos": 14,
+                "ypos": 2,
+                "electron_configuration": "[He] 2s² 2p²",
+                "electronegativity_pauling": 2.55,
+                "isotopes": [
+                    {
+                        "mass": 12,
+                        "abundance": "98.9%"
+                    },
+                    {
+                        "mass": 13,
+                        "abundance": "1.1%"
+                    },
+                    {
+                        "mass": 14,
+                        "abundance": "trace"
+                    }
+                ]
+            },
+            {
+                "name": "Nitrogen",
+                "atomic_number": 7,
+                "symbol": "N",
+                "atomic_mass": 14.007,
+                "category": "diatomic nonmetal",
+                "phase": "Gas",
+                "xpos": 15,
+                "ypos": 2,
+                "electron_configuration": "[He] 2s² 2p³",
+                "electronegativity_pauling": 3.04,
+                "isotopes": [
+                    {
+                        "mass": 14,
+                        "abundance": "99.636%"
+                    },
+                    {
+                        "mass": 15,
+                        "abundance": "0.364%"
+                    }
+                ]
+            },
+            {
+                "name": "Oxygen",
+                "atomic_number": 8,
+                "symbol": "O",
+                "atomic_mass": 15.999,
+                "category": "diatomic nonmetal",
+                "phase": "Gas",
+                "xpos": 16,
+                "ypos": 2,
+                "electron_configuration": "[He] 2s² 2p⁴",
+                "electronegativity_pauling": 3.44,
+                "isotopes": [
+                    {
+                        "mass": 16,
+                        "abundance": "99.76%"
+                    },
+                    {
+                        "mass": 17,
+                        "abundance": "0.04%"
+                    },
+                    {
+                        "mass": 18,
+                        "abundance": "0.2%"
+                    }
+                ]
+            },
+            {
+                "name": "Fluorine",
+                "atomic_number": 9,
+                "symbol": "F",
+                "atomic_mass": 18.998403163,
+                "category": "diatomic nonmetal",
+                "phase": "Gas",
+                "xpos": 17,
+                "ypos": 2,
+                "electron_configuration": "[He] 2s² 2p⁵",
+                "electronegativity_pauling": 3.98,
+                "isotopes": [
+                    {
+                        "mass": 19,
+                        "abundance": "100%"
+                    }
+                ]
+            },
+            {
+                "name": "Neon",
+                "atomic_number": 10,
+                "symbol": "Ne",
+                "atomic_mass": 20.1797,
+                "category": "noble gas",
+                "phase": "Gas",
+                "xpos": 18,
+                "ypos": 2,
+                "electron_configuration": "[He] 2s² 2p⁶",
+                "electronegativity_pauling": null,
+                "isotopes": [
+                    {
+                        "mass": 20,
+                        "abundance": "90.48%"
+                    },
+                    {
+                        "mass": 21,
+                        "abundance": "0.27%"
+                    },
+                    {
+                        "mass": 22,
+                        "abundance": "9.25%"
+                    }
+                ]
+            },
+            {
+                "name": "Sodium",
+                "atomic_number": 11,
+                "symbol": "Na",
+                "atomic_mass": 22.98976928,
+                "category": "alkali metal",
+                "phase": "Solid",
+                "xpos": 1,
+                "ypos": 3,
+                "electron_configuration": "[Ne] 3s¹",
+                "electronegativity_pauling": 0.93,
+                "isotopes": [
+                    {
+                        "mass": 23,
+                        "abundance": "100%"
+                    }
+                ]
+            },
+            {
+                "name": "Magnesium",
+                "atomic_number": 12,
+                "symbol": "Mg",
+                "atomic_mass": 24.305,
+                "category": "alkaline earth metal",
+                "phase": "Solid",
+                "xpos": 2,
+                "ypos": 3,
+                "electron_configuration": "[Ne] 3s²",
+                "electronegativity_pauling": 1.31,
+                "isotopes": [
+                    {
+                        "mass": 24,
+                        "abundance": "78.99%"
+                    },
+                    {
+                        "mass": 25,
+                        "abundance": "10.00%"
+                    },
+                    {
+                        "mass": 26,
+                        "abundance": "11.01%"
+                    }
+                ]
+            },
+            {
+                "name": "Aluminium",
+                "atomic_number": 13,
+                "symbol": "Al",
+                "atomic_mass": 26.9815385,
+                "category": "post-transition metal",
+                "phase": "Solid",
+                "xpos": 13,
+                "ypos": 3,
+                "electron_configuration": "[Ne] 3s² 3p¹",
+                "electronegativity_pauling": 1.61,
+                "isotopes": [
+                    {
+                        "mass": 27,
+                        "abundance": "100%"
+                    }
+                ]
+            },
+            {
+                "name": "Silicon",
+                "atomic_number": 14,
+                "symbol": "Si",
+                "atomic_mass": 28.085,
+                "category": "metalloid",
+                "phase": "Solid",
+                "xpos": 14,
+                "ypos": 3,
+                "electron_configuration": "[Ne] 3s² 3p²",
+                "electronegativity_pauling": 1.90,
+                "isotopes": [
+                    {
+                        "mass": 28,
+                        "abundance": "92.223%"
+                    },
+                    {
+                        "mass": 29,
+                        "abundance": "4.685%"
+                    },
+                    {
+                        "mass": 30,
+                        "abundance": "3.092%"
+                    }
+                ]
+            },
+            {
+                "name": "Phosphorus",
+                "atomic_number": 15,
+                "symbol": "P",
+                "atomic_mass": 30.973761998,
+                "category": "polyatomic nonmetal",
+                "phase": "Solid",
+                "xpos": 15,
+                "ypos": 3,
+                "electron_configuration": "[Ne] 3s² 3p³",
+                "electronegativity_pauling": 2.19,
+                "isotopes": [
+                    {
+                        "mass": 31,
+                        "abundance": "100%"
+                    }
+                ]
+            },
+            {
+                "name": "Sulfur",
+                "atomic_number": 16,
+                "symbol": "S",
+                "atomic_mass": 32.06,
+                "category": "polyatomic nonmetal",
+                "phase": "Solid",
+                "xpos": 16,
+                "ypos": 3,
+                "electron_configuration": "[Ne] 3s² 3p⁴",
+                "electronegativity_pauling": 2.58,
+                "isotopes": [
+                    {
+                        "mass": 32,
+                        "abundance": "94.99%"
+                    },
+                    {
+                        "mass": 33,
+                        "abundance": "0.75%"
+                    },
+                    {
+                        "mass": 34,
+                        "abundance": "4.25%"
+                    },
+                    {
+                        "mass": 36,
+                        "abundance": "0.01%"
+                    }
+                ]
+            },
+            {
+                "name": "Chlorine",
+                "atomic_number": 17,
+                "symbol": "Cl",
+                "atomic_mass": 35.45,
+                "category": "diatomic nonmetal",
+                "phase": "Gas",
+                "xpos": 17,
+                "ypos": 3,
+                "electron_configuration": "[Ne] 3s² 3p⁵",
+                "electronegativity_pauling": 3.16,
+                "isotopes": [
+                    {
+                        "mass": 35,
+                        "abundance": "75.77%"
+                    },
+                    {
+                        "mass": 37,
+                        "abundance": "24.23%"
+                    }
+                ]
+            },
+            {
+                "name": "Argon",
+                "atomic_number": 18,
+                "symbol": "Ar",
+                "atomic_mass": 39.948,
+                "category": "noble gas",
+                "phase": "Gas",
+                "xpos": 18,
+                "ypos": 3,
+                "electron_configuration": "[Ne] 3s² 3p⁶",
+                "electronegativity_pauling": null,
+                "isotopes": [
+                    {
+                        "mass": 36,
+                        "abundance": "0.3336%"
+                    },
+                    {
+                        "mass": 38,
+                        "abundance": "0.0629%"
+                    },
+                    {
+                        "mass": 40,
+                        "abundance": "99.6035%"
+                    }
+                ]
+            },
+            {
+                "name": "Potassium",
+                "atomic_number": 19,
+                "symbol": "K",
+                "atomic_mass": 39.0983,
+                "category": "alkali metal",
+                "phase": "Solid",
+                "xpos": 1,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 4s¹",
+                "electronegativity_pauling": 0.82,
+                "isotopes": [
+                    {
+                        "mass": 39,
+                        "abundance": "93.3%"
+                    },
+                    {
+                        "mass": 40,
+                        "abundance": "0.012%"
+                    },
+                    {
+                        "mass": 41,
+                        "abundance": "6.73%"
+                    }
+                ]
+            },
+            {
+                "name": "Calcium",
+                "atomic_number": 20,
+                "symbol": "Ca",
+                "atomic_mass": 40.078,
+                "category": "alkaline earth metal",
+                "phase": "Solid",
+                "xpos": 2,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 4s²",
+                "electronegativity_pauling": 1.00,
+                "melting_point": 1115,
+                "boiling_point": 1757
+            },
+            {
+                "name": "Scandium",
+                "atomic_number": 21,
+                "symbol": "Sc",
+                "atomic_mass": 44.955908,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 3,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 3d¹ 4s²",
+                "electronegativity_pauling": 1.36,
+                "melting_point": 1814,
+                "boiling_point": 3109
+            },
+            {
+                "name": "Titanium",
+                "atomic_number": 22,
+                "symbol": "Ti",
+                "atomic_mass": 47.867,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 4,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 3d² 4s²",
+                "electronegativity_pauling": 1.54,
+                "melting_point": 1941,
+                "boiling_point": 3560
+            },
+            {
+                "name": "Vanadium",
+                "atomic_number": 23,
+                "symbol": "V",
+                "atomic_mass": 50.9415,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 5,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 3d³ 4s²",
+                "electronegativity_pauling": 1.63,
+                "melting_point": 2183,
+                "boiling_point": 3680
+            },
+            {
+                "name": "Chromium",
+                "atomic_number": 24,
+                "symbol": "Cr",
+                "atomic_mass": 51.9961,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 6,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 3d⁵ 4s¹",
+                "electronegativity_pauling": 1.66,
+                "melting_point": 2180,
+                "boiling_point": 2944
+            },
+            {
+                "name": "Manganese",
+                "atomic_number": 25,
+                "symbol": "Mn",
+                "atomic_mass": 54.938044,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 7,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 3d⁵ 4s²",
+                "electronegativity_pauling": 1.55,
+                "melting_point": 1519,
+                "boiling_point": 2334
+            },
+            {
+                "name": "Iron",
+                "atomic_number": 26,
+                "symbol": "Fe",
+                "atomic_mass": 55.845,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 8,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 3d⁶ 4s²",
+                "electronegativity_pauling": 1.83,
+                "melting_point": 1811,
+                "boiling_point": 3134
+            },
+            {
+                "name": "Cobalt",
+                "atomic_number": 27,
+                "symbol": "Co",
+                "atomic_mass": 58.933194,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 9,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 3d⁷ 4s²",
+                "electronegativity_pauling": 1.88,
+                "melting_point": 1768,
+                "boiling_point": 3200
+            },
+            {
+                "name": "Nickel",
+                "atomic_number": 28,
+                "symbol": "Ni",
+                "atomic_mass": 58.6934,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 10,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 3d⁸ 4s²",
+                "electronegativity_pauling": 1.91,
+                "melting_point": 1728,
+                "boiling_point": 3186
+            },
+            {
+                "name": "Copper",
+                "atomic_number": 29,
+                "symbol": "Cu",
+                "atomic_mass": 63.546,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 11,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 3d¹⁰ 4s¹",
+                "electronegativity_pauling": 1.90,
+                "melting_point": 1357.77,
+                "boiling_point": 2835
+            },
+            {
+                "name": "Zinc",
+                "atomic_number": 30,
+                "symbol": "Zn",
+                "atomic_mass": 65.38,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 12,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 3d¹⁰ 4s²",
+                "electronegativity_pauling": 1.65,
+                "melting_point": 692.68,
+                "boiling_point": 1180
+            },
+            {
+                "name": "Gallium",
+                "atomic_number": 31,
+                "symbol": "Ga",
+                "atomic_mass": 69.723,
+                "category": "post-transition metal",
+                "phase": "Solid",
+                "xpos": 13,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 3d¹⁰ 4s² 4p¹",
+                "electronegativity_pauling": 1.81,
+                "melting_point": 302.9146,
+                "boiling_point": 2673
+            },
+            {
+                "name": "Germanium",
+                "atomic_number": 32,
+                "symbol": "Ge",
+                "atomic_mass": 72.63,
+                "category": "metalloid",
+                "phase": "Solid",
+                "xpos": 14,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 3d¹⁰ 4s² 4p²",
+                "electronegativity_pauling": 2.01,
+                "melting_point": 1211.4,
+                "boiling_point": 3106
+            },
+            {
+                "name": "Arsenic",
+                "atomic_number": 33,
+                "symbol": "As",
+                "atomic_mass": 74.921595,
+                "category": "metalloid",
+                "phase": "Solid",
+                "xpos": 15,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 3d¹⁰ 4s² 4p³",
+                "electronegativity_pauling": 2.18,
+                "melting_point": 1090,
+                "boiling_point": 887
+            },
+            {
+                "name": "Selenium",
+                "atomic_number": 34,
+                "symbol": "Se",
+                "atomic_mass": 78.971,
+                "category": "polyatomic nonmetal",
+                "phase": "Solid",
+                "xpos": 16,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 3d¹⁰ 4s² 4p⁴",
+                "electronegativity_pauling": 2.55,
+                "melting_point": 494,
+                "boiling_point": 958
+            },
+            {
+                "name": "Bromine",
+                "atomic_number": 35,
+                "symbol": "Br",
+                "atomic_mass": 79.904,
+                "category": "diatomic nonmetal",
+                "phase": "Liquid",
+                "xpos": 17,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 3d¹⁰ 4s² 4p⁵",
+                "electronegativity_pauling": 2.96,
+                "melting_point": 265.9,
+                "boiling_point": 332.0
+            },
+            {
+                "name": "Krypton",
+                "atomic_number": 36,
+                "symbol": "Kr",
+                "atomic_mass": 83.798,
+                "category": "noble gas",
+                "phase": "Gas",
+                "xpos": 18,
+                "ypos": 4,
+                "electron_configuration": "[Ar] 3d¹⁰ 4s² 4p⁶",
+                "electronegativity_pauling": 3.00,
+                "melting_point": 115.78,
+                "boiling_point": 119.93
+            },
+            {
+                "name": "Rubidium",
+                "atomic_number": 37,
+                "symbol": "Rb",
+                "atomic_mass": 85.4678,
+                "category": "alkali metal",
+                "phase": "Solid",
+                "xpos": 1,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 5s¹",
+                "electronegativity_pauling": 0.82,
+                "melting_point": 312.46,
+                "boiling_point": 961
+            },
+            {
+                "name": "Strontium",
+                "atomic_number": 38,
+                "symbol": "Sr",
+                "atomic_mass": 87.62,
+                "category": "alkaline earth metal",
+                "phase": "Solid",
+                "xpos": 2,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 5s²",
+                "electronegativity_pauling": 0.95,
+                "melting_point": 1050,
+                "boiling_point": 1655
+            },
+            {
+                "name": "Yttrium",
+                "atomic_number": 39,
+                "symbol": "Y",
+                "atomic_mass": 88.90584,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 3,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 4d¹ 5s²",
+                "electronegativity_pauling": 1.22,
+                "melting_point": 1799,
+                "boiling_point": 3609
+            },
+            {
+                "name": "Zirconium",
+                "atomic_number": 40,
+                "symbol": "Zr",
+                "atomic_mass": 91.224,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 4,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 4d² 5s²",
+                "electronegativity_pauling": 1.33,
+                "melting_point": 2128,
+                "boiling_point": 4682
+            },
+            {
+                "name": "Niobium",
+                "atomic_number": 41,
+                "symbol": "Nb",
+                "atomic_mass": 92.90637,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 5,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 4d⁴ 5s¹",
+                "electronegativity_pauling": 1.6,
+                "melting_point": 2750,
+                "boiling_point": 5017
+            },
+            {
+                "name": "Molybdenum",
+                "atomic_number": 42,
+                "symbol": "Mo",
+                "atomic_mass": 95.95,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 6,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 4d⁵ 5s¹",
+                "electronegativity_pauling": 2.16,
+                "melting_point": 2896,
+                "boiling_point": 4912
+            },
+            {
+                "name": "Technetium",
+                "atomic_number": 43,
+                "symbol": "Tc",
+                "atomic_mass": 98,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 7,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 4d⁵ 5s²",
+                "electronegativity_pauling": 1.9,
+                "melting_point": 2430,
+                "boiling_point": 4538
+            },
+            {
+                "name": "Ruthenium",
+                "atomic_number": 44,
+                "symbol": "Ru",
+                "atomic_mass": 101.07,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 8,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 4d⁷ 5s¹",
+                "electronegativity_pauling": 2.2,
+                "melting_point": 2607,
+                "boiling_point": 4423
+            },
+            {
+                "name": "Rhodium",
+                "atomic_number": 45,
+                "symbol": "Rh",
+                "atomic_mass": 102.90550,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 9,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 4d⁸ 5s¹",
+                "electronegativity_pauling": 2.28,
+                "melting_point": 2237,
+                "boiling_point": 3968
+            },
+            {
+                "name": "Palladium",
+                "atomic_number": 46,
+                "symbol": "Pd",
+                "atomic_mass": 106.42,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 10,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 4d¹⁰",
+                "electronegativity_pauling": 2.20,
+                "melting_point": 1828.05,
+                "boiling_point": 3236
+            },
+            {
+                "name": "Silver",
+                "atomic_number": 47,
+                "symbol": "Ag",
+                "atomic_mass": 107.8682,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 11,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 4d¹⁰ 5s¹",
+                "electronegativity_pauling": 1.93,
+                "melting_point": 1234.93,
+                "boiling_point": 2435
+            },
+            {
+                "name": "Cadmium",
+                "atomic_number": 48,
+                "symbol": "Cd",
+                "atomic_mass": 112.414,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 12,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 4d¹⁰ 5s²",
+                "electronegativity_pauling": 1.69,
+                "melting_point": 594.22,
+                "boiling_point": 1040
+            },
+            {
+                "name": "Indium",
+                "atomic_number": 49,
+                "symbol": "In",
+                "atomic_mass": 114.818,
+                "category": "post-transition metal",
+                "phase": "Solid",
+                "xpos": 13,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 4d¹⁰ 5s² 5p¹",
+                "electronegativity_pauling": 1.78,
+                "melting_point": 429.75,
+                "boiling_point": 2345
+            },
+            {
+                "name": "Tin",
+                "atomic_number": 50,
+                "symbol": "Sn",
+                "atomic_mass": 118.710,
+                "category": "post-transition metal",
+                "phase": "Solid",
+                "xpos": 14,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 4d¹⁰ 5s² 5p²",
+                "electronegativity_pauling": 1.96,
+                "melting_point": 505.08,
+                "boiling_point": 2875
+            },
+            {
+                "name": "Antimony",
+                "atomic_number": 51,
+                "symbol": "Sb",
+                "atomic_mass": 121.760,
+                "category": "metalloid",
+                "phase": "Solid",
+                "xpos": 15,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 4d¹⁰ 5s² 5p³",
+                "electronegativity_pauling": 2.05,
+                "melting_point": 903.78,
+                "boiling_point": 1587
+            },
+            {
+                "name": "Tellurium",
+                "atomic_number": 52,
+                "symbol": "Te",
+                "atomic_mass": 127.60,
+                "category": "metalloid",
+                "phase": "Solid",
+                "xpos": 16,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 4d¹⁰ 5s² 5p⁴",
+                "electronegativity_pauling": 2.1,
+                "melting_point": 722.68,
+                "boiling_point": 1261
+            },
+            {
+                "name": "Iodine",
+                "atomic_number": 53,
+                "symbol": "I",
+                "atomic_mass": 126.90447,
+                "category": "diatomic nonmetal",
+                "phase": "Solid",
+                "xpos": 17,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 4d¹⁰ 5s² 5p⁵",
+                "electronegativity_pauling": 2.66,
+                "melting_point": 386.85,
+                "boiling_point": 457.4
+            },
+            {
+                "name": "Xenon",
+                "atomic_number": 54,
+                "symbol": "Xe",
+                "atomic_mass": 131.293,
+                "category": "noble gas",
+                "phase": "Gas",
+                "xpos": 18,
+                "ypos": 5,
+                "electron_configuration": "[Kr] 4d¹⁰ 5s² 5p⁶",
+                "electronegativity_pauling": 2.6,
+                "melting_point": 161.4,
+                "boiling_point": 165.03
+            },
+            {
+                "name": "Caesium",
+                "atomic_number": 55,
+                "symbol": "Cs",
+                "atomic_mass": 132.90545196,
+                "category": "alkali metal",
+                "phase": "Solid",
+                "xpos": 1,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 6s¹",
+                "electronegativity_pauling": 0.79,
+                "melting_point": 301.59,
+                "boiling_point": 944
+            },
+            {
+                "name": "Barium",
+                "atomic_number": 56,
+                "symbol": "Ba",
+                "atomic_mass": 137.327,
+                "category": "alkaline earth metal",
+                "phase": "Solid",
+                "xpos": 2,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 6s²",
+                "electronegativity_pauling": 0.89,
+                "melting_point": 1000,
+                "boiling_point": 2170
+            },
+            {
+                "name": "Lanthanum",
+                "atomic_number": 57,
+                "symbol": "La",
+                "atomic_mass": 138.90547,
+                "category": "lanthanide",
+                "phase": "Solid",
+                "xpos": 3,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 5d¹ 6s²",
+                "electronegativity_pauling": 1.1,
+                "melting_point": 1193,
+                "boiling_point": 3737
+            },
+            {
+                "name": "Cerium",
+                "atomic_number": 58,
+                "symbol": "Ce",
+                "atomic_mass": 140.116,
+                "category": "lanthanide",
+                "phase": "Solid",
+                "xpos": 4,
+                "ypos": 9,
+                "electron_configuration": "[Xe] 4f¹ 5d¹ 6s²",
+                "electronegativity_pauling": 1.12,
+                "melting_point": 1068,
+                "boiling_point": 3716
+            },
+            {
+                "name": "Praseodymium",
+                "atomic_number": 59,
+                "symbol": "Pr",
+                "atomic_mass": 140.90766,
+                "category": "lanthanide",
+                "phase": "Solid",
+                "xpos": 5,
+                "ypos": 9,
+                "electron_configuration": "[Xe] 4f³ 6s²",
+                "electronegativity_pauling": 1.13,
+                "melting_point": 1208,
+                "boiling_point": 3790
+            },
+            {
+                "name": "Neodymium",
+                "atomic_number": 60,
+                "symbol": "Nd",
+                "atomic_mass": 144.242,
+                "category": "lanthanide",
+                "phase": "Solid",
+                "xpos": 6,
+                "ypos": 9,
+                "electron_configuration": "[Xe] 4f⁴ 6s²",
+                "electronegativity_pauling": 1.14,
+                "melting_point": 1297,
+                "boiling_point": 3347
+            },
+            {
+                "name": "Promethium",
+                "atomic_number": 61,
+                "symbol": "Pm",
+                "atomic_mass": 145,
+                "category": "lanthanide",
+                "phase": "Solid",
+                "xpos": 7,
+                "ypos": 9,
+                "electron_configuration": "[Xe] 4f⁵ 6s²",
+                "electronegativity_pauling": 1.13,
+                "melting_point": 1315,
+                "boiling_point": 3290
+            },
+            {
+                "name": "Samarium",
+                "atomic_number": 62,
+                "symbol": "Sm",
+                "atomic_mass": 150.36,
+                "category": "lanthanide",
+                "phase": "Solid",
+                "xpos": 8,
+                "ypos": 9,
+                "electron_configuration": "[Xe] 4f⁶ 6s²",
+                "electronegativity_pauling": 1.17,
+                "melting_point": 1345,
+                "boiling_point": 2067
+            },
+            {
+                "name": "Europium",
+                "atomic_number": 63,
+                "symbol": "Eu",
+                "atomic_mass": 151.964,
+                "category": "lanthanide",
+                "phase": "Solid",
+                "xpos": 9,
+                "ypos": 9,
+                "electron_configuration": "[Xe] 4f⁷ 6s²",
+                "electronegativity_pauling": 1.2,
+                "melting_point": 1099,
+                "boiling_point": 1802
+            },
+            {
+                "name": "Gadolinium",
+                "atomic_number": 64,
+                "symbol": "Gd",
+                "atomic_mass": 157.25,
+                "category": "lanthanide",
+                "phase": "Solid",
+                "xpos": 10,
+                "ypos": 9,
+                "electron_configuration": "[Xe] 4f⁷ 5d¹ 6s²",
+                "electronegativity_pauling": 1.2,
+                "melting_point": 1585,
+                "boiling_point": 3273
+            },
+            {
+                "name": "Terbium",
+                "atomic_number": 65,
+                "symbol": "Tb",
+                "atomic_mass": 158.92535,
+                "category": "lanthanide",
+                "phase": "Solid",
+                "xpos": 11,
+                "ypos": 9,
+                "electron_configuration": "[Xe] 4f⁹ 6s²",
+                "electronegativity_pauling": 1.2,
+                "melting_point": 1629,
+                "boiling_point": 3503
+            },
+            {
+                "name": "Dysprosium",
+                "atomic_number": 66,
+                "symbol": "Dy",
+                "atomic_mass": 162.500,
+                "category": "lanthanide",
+                "phase": "Solid",
+                "xpos": 12,
+                "ypos": 9,
+                "electron_configuration": "[Xe] 4f¹⁰ 6s²",
+                "electronegativity_pauling": 1.22,
+                "melting_point": 1680,
+                "boiling_point": 3340
+            },
+            {
+                "name": "Holmium",
+                "atomic_number": 67,
+                "symbol": "Ho",
+                "atomic_mass": 164.93033,
+                "category": "lanthanide",
+                "phase": "Solid",
+                "xpos": 13,
+                "ypos": 9,
+                "electron_configuration": "[Xe] 4f¹¹ 6s²",
+                "electronegativity_pauling": 1.23,
+                "melting_point": 1734,
+                "boiling_point": 2993
+            },
+            {
+                "name": "Erbium",
+                "atomic_number": 68,
+                "symbol": "Er",
+                "atomic_mass": 167.259,
+                "category": "lanthanide",
+                "phase": "Solid",
+                "xpos": 14,
+                "ypos": 9,
+                "electron_configuration": "[Xe] 4f¹² 6s²",
+                "electronegativity_pauling": 1.24,
+                "melting_point": 1795,
+                "boiling_point": 3141
+            },
+            {
+                "name": "Thulium",
+                "atomic_number": 69,
+                "symbol": "Tm",
+                "atomic_mass": 168.93422,
+                "category": "lanthanide",
+                "phase": "Solid",
+                "xpos": 15,
+                "ypos": 9,
+                "electron_configuration": "[Xe] 4f¹³ 6s²",
+                "electronegativity_pauling": 1.25,
+                "melting_point": 1818,
+                "boiling_point": 2223
+            },
+            {
+                "name": "Ytterbium",
+                "atomic_number": 70,
+                "symbol": "Yb",
+                "atomic_mass": 173.045,
+                "category": "lanthanide",
+                "phase": "Solid",
+                "xpos": 16,
+                "ypos": 9,
+                "electron_configuration": "[Xe] 4f¹⁴ 6s²",
+                "electronegativity_pauling": 1.27,
+                "melting_point": 1097,
+                "boiling_point": 1469
+            },
+            {
+                "name": "Lutetium",
+                "atomic_number": 71,
+                "symbol": "Lu",
+                "atomic_mass": 174.9668,
+                "category": "lanthanide",
+                "phase": "Solid",
+                "xpos": 17,
+                "ypos": 9,
+                "electron_configuration": "[Xe] 4f¹⁴ 5d¹ 6s²",
+                "electronegativity_pauling": 1.27,
+                "melting_point": 1925,
+                "boiling_point": 3675
+            },
+            {
+                "name": "Hafnium",
+                "atomic_number": 72,
+                "symbol": "Hf",
+                "atomic_mass": 178.49,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 4,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 4f¹⁴ 5d² 6s²",
+                "electronegativity_pauling": 1.3,
+                "melting_point": 2506,
+                "boiling_point": 4876
+            },
+            {
+                "name": "Tantalum",
+                "atomic_number": 73,
+                "symbol": "Ta",
+                "atomic_mass": 180.94788,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 5,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 4f¹⁴ 5d³ 6s²",
+                "electronegativity_pauling": 1.5,
+                "melting_point": 3290,
+                "boiling_point": 5731
+            },
+            {
+                "name": "Tungsten",
+                "atomic_number": 74,
+                "symbol": "W",
+                "atomic_mass": 183.84,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 6,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 4f¹⁴ 5d⁴ 6s²",
+                "electronegativity_pauling": 2.36,
+                "melting_point": 3695,
+                "boiling_point": 5828
+            },
+            {
+                "name": "Rhenium",
+                "atomic_number": 75,
+                "symbol": "Re",
+                "atomic_mass": 186.207,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 7,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 4f¹⁴ 5d⁵ 6s²",
+                "electronegativity_pauling": 1.9,
+                "melting_point": 3459,
+                "boiling_point": 5869
+            },
+            {
+                "name": "Osmium",
+                "atomic_number": 76,
+                "symbol": "Os",
+                "atomic_mass": 190.23,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 8,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 4f¹⁴ 5d⁶ 6s²",
+                "electronegativity_pauling": 2.2,
+                "melting_point": 3306,
+                "boiling_point": 5285
+            },
+            {
+                "name": "Iridium",
+                "atomic_number": 77,
+                "symbol": "Ir",
+                "atomic_mass": 192.217,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 9,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 4f¹⁴ 5d⁷ 6s²",
+                "electronegativity_pauling": 2.2,
+                "melting_point": 2719,
+                "boiling_point": 6265
+            },
+            {
+                "name": "Platinum",
+                "atomic_number": 78,
+                "symbol": "Pt",
+                "atomic_mass": 195.084,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 10,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 4f¹⁴ 5d⁹ 6s¹",
+                "electronegativity_pauling": 2.28,
+                "melting_point": 2041.4,
+                "boiling_point": 4098
+            },
+            {
+                "name": "Gold",
+                "atomic_number": 79,
+                "symbol": "Au",
+                "atomic_mass": 196.96657,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 11,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 4f¹⁴ 5d¹⁰ 6s¹",
+                "electronegativity_pauling": 2.54,
+                "melting_point": 1337.33,
+                "boiling_point": 3129
+            },
+            {
+                "name": "Mercury",
+                "atomic_number": 80,
+                "symbol": "Hg",
+                "atomic_mass": 200.592,
+                "category": "transition metal",
+                "phase": "Liquid",
+                "xpos": 12,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 4f¹⁴ 5d¹⁰ 6s²",
+                "electronegativity_pauling": 2,
+                "melting_point": 234.32,
+                "boiling_point": 629.88
+            },
+            {
+                "name": "Thallium",
+                "atomic_number": 81,
+                "symbol": "Tl",
+                "atomic_mass": 204.38,
+                "category": "post-transition metal",
+                "phase": "Solid",
+                "xpos": 13,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p¹",
+                "electronegativity_pauling": 1.62,
+                "melting_point": 577,
+                "boiling_point": 1746
+            },
+            {
+                "name": "Lead",
+                "atomic_number": 82,
+                "symbol": "Pb",
+                "atomic_mass": 207.2,
+                "category": "post-transition metal",
+                "phase": "Solid",
+                "xpos": 14,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p²",
+                "electronegativity_pauling": 1.87,
+                "melting_point": 600.61,
+                "boiling_point": 2022
+            },
+            {
+                "name": "Bismuth",
+                "atomic_number": 83,
+                "symbol": "Bi",
+                "atomic_mass": 208.9804,
+                "category": "post-transition metal",
+                "phase": "Solid",
+                "xpos": 15,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p³",
+                "electronegativity_pauling": 2.02,
+                "melting_point": 544.7,
+                "boiling_point": 1837
+            },
+            {
+                "name": "Polonium",
+                "atomic_number": 84,
+                "symbol": "Po",
+                "atomic_mass": 209,
+                "category": "post-transition metal",
+                "phase": "Solid",
+                "xpos": 16,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁴",
+                "electronegativity_pauling": 2,
+                "melting_point": 527,
+                "boiling_point": 1235
+            },
+            {
+                "name": "Astatine",
+                "atomic_number": 85,
+                "symbol": "At",
+                "atomic_mass": 210,
+                "category": "metalloid",
+                "phase": "Solid",
+                "xpos": 17,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁵",
+                "electronegativity_pauling": 2.2,
+                "melting_point": 575,
+                "boiling_point": 610
+            },
+            {
+                "name": "Radon",
+                "atomic_number": 86,
+                "symbol": "Rn",
+                "atomic_mass": 222,
+                "category": "noble gas",
+                "phase": "Gas",
+                "xpos": 18,
+                "ypos": 6,
+                "electron_configuration": "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁶",
+                "electronegativity_pauling": 2.2,
+                "melting_point": 202,
+                "boiling_point": 211.5
+            },
+            {
+                "name": "Francium",
+                "atomic_number": 87,
+                "symbol": "Fr",
+                "atomic_mass": 223,
+                "category": "alkali metal",
+                "phase": "Solid",
+                "xpos": 1,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 7s¹",
+                "electronegativity_pauling": 0.7,
+                "melting_point": 300,
+                "boiling_point": 950
+            },
+            {
+                "name": "Radium",
+                "atomic_number": 88,
+                "symbol": "Ra",
+                "atomic_mass": 226,
+                "category": "alkaline earth metal",
+                "phase": "Solid",
+                "xpos": 2,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 7s²",
+                "electronegativity_pauling": 0.9,
+                "melting_point": 1200,
+                "boiling_point": 2010
+            },
+            {
+                "name": "Actinium",
+                "atomic_number": 89,
+                "symbol": "Ac",
+                "atomic_mass": 227,
+                "category": "actinide",
+                "phase": "Solid",
+                "xpos": 3,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 6d¹ 7s²",
+                "electronegativity_pauling": 1.1,
+                "melting_point": 1323,
+                "boiling_point": 3471
+            },
+            {
+                "name": "Thorium",
+                "atomic_number": 90,
+                "symbol": "Th",
+                "atomic_mass": 232.0377,
+                "category": "actinide",
+                "phase": "Solid",
+                "xpos": 4,
+                "ypos": 10,
+                "electron_configuration": "[Rn] 6d² 7s²",
+                "electronegativity_pauling": 1.3,
+                "melting_point": 2115,
+                "boiling_point": 5061,
+                "isotopes": [
+                    {
+                        "mass": 232,
+                        "abundance": "100%"
+                    }
+                ]
+            },
+            {
+                "name": "Protactinium",
+                "atomic_number": 91,
+                "symbol": "Pa",
+                "atomic_mass": 231.03588,
+                "category": "actinide",
+                "phase": "Solid",
+                "xpos": 5,
+                "ypos": 10,
+                "electron_configuration": "[Rn] 5f² 6d¹ 7s²",
+                "electronegativity_pauling": 1.5,
+                "melting_point": 1841,
+                "boiling_point": 4300
+            },
+            {
+                "name": "Uranium",
+                "atomic_number": 92,
+                "symbol": "U",
+                "atomic_mass": 238.02891,
+                "category": "actinide",
+                "phase": "Solid",
+                "xpos": 6,
+                "ypos": 10,
+                "electron_configuration": "[Rn] 5f³ 6d¹ 7s²",
+                "electronegativity_pauling": 1.38,
+                "melting_point": 1405.3,
+                "boiling_point": 4404,
+                "isotopes": [
+                    {
+                        "mass": 234,
+                        "abundance": "0.005%"
+                    },
+                    {
+                        "mass": 235,
+                        "abundance": "0.720%"
+                    },
+                    {
+                        "mass": 238,
+                        "abundance": "99.275%"
+                    }
+                ]
+            },
+            {
+                "name": "Neptunium",
+                "atomic_number": 93,
+                "symbol": "Np",
+                "atomic_mass": 237,
+                "category": "actinide",
+                "phase": "Solid",
+                "xpos": 7,
+                "ypos": 10,
+                "electron_configuration": "[Rn] 5f⁴ 6d¹ 7s²",
+                "electronegativity_pauling": 1.36,
+                "melting_point": 912,
+                "boiling_point": 4273
+            },
+            {
+                "name": "Plutonium",
+                "atomic_number": 94,
+                "symbol": "Pu",
+                "atomic_mass": 244,
+                "category": "actinide",
+                "phase": "Solid",
+                "xpos": 8,
+                "ypos": 10,
+                "electron_configuration": "[Rn] 5f⁶ 7s²",
+                "electronegativity_pauling": 1.28,
+                "melting_point": 912.5,
+                "boiling_point": 3501
+            },
+            {
+                "name": "Americium",
+                "atomic_number": 95,
+                "symbol": "Am",
+                "atomic_mass": 243,
+                "category": "actinide",
+                "phase": "Solid",
+                "xpos": 9,
+                "ypos": 10,
+                "electron_configuration": "[Rn] 5f⁷ 7s²",
+                "electronegativity_pauling": 1.3,
+                "melting_point": 1449,
+                "boiling_point": 2887
+            },
+            {
+                "name": "Curium",
+                "atomic_number": 96,
+                "symbol": "Cm",
+                "atomic_mass": 247,
+                "category": "actinide",
+                "phase": "Solid",
+                "xpos": 10,
+                "ypos": 10,
+                "electron_configuration": "[Rn] 5f⁷ 6d¹ 7s²",
+                "electronegativity_pauling": 1.3,
+                "melting_point": 1613,
+                "boiling_point": 3383
+            },
+            {
+                "name": "Berkelium",
+                "atomic_number": 97,
+                "symbol": "Bk",
+                "atomic_mass": 247,
+                "category": "actinide",
+                "phase": "Solid",
+                "xpos": 11,
+                "ypos": 10,
+                "electron_configuration": "[Rn] 5f⁹ 7s²",
+                "electronegativity_pauling": 1.3,
+                "melting_point": 1259,
+                "boiling_point": 2900
+            },
+            {
+                "name": "Californium",
+                "atomic_number": 98,
+                "symbol": "Cf",
+                "atomic_mass": 251,
+                "category": "actinide",
+                "phase": "Solid",
+                "xpos": 12,
+                "ypos": 10,
+                "electron_configuration": "[Rn] 5f¹⁰ 7s²",
+                "electronegativity_pauling": 1.3,
+                "melting_point": 1173,
+                "boiling_point": 1743
+            },
+            {
+                "name": "Einsteinium",
+                "atomic_number": 99,
+                "symbol": "Es",
+                "atomic_mass": 252,
+                "category": "actinide",
+                "phase": "Solid",
+                "xpos": 13,
+                "ypos": 10,
+                "electron_configuration": "[Rn] 5f¹¹ 7s²",
+                "electronegativity_pauling": 1.3,
+                "melting_point": 1133,
+                "boiling_point": 1269
+            },
+            {
+                "name": "Fermium",
+                "atomic_number": 100,
+                "symbol": "Fm",
+                "atomic_mass": 257,
+                "category": "actinide",
+                "phase": "Solid",
+                "xpos": 14,
+                "ypos": 10,
+                "electron_configuration": "[Rn] 5f¹² 7s²",
+                "electronegativity_pauling": 1.3,
+                "melting_point": 1125
+            },
+            {
+                "name": "Mendelevium",
+                "atomic_number": 101,
+                "symbol": "Md",
+                "atomic_mass": 258,
+                "category": "actinide",
+                "phase": "Solid",
+                "xpos": 15,
+                "ypos": 10,
+                "electron_configuration": "[Rn] 5f¹³ 7s²",
+                "electronegativity_pauling": 1.3,
+                "melting_point": 1100
+            },
+            {
+                "name": "Nobelium",
+                "atomic_number": 102,
+                "symbol": "No",
+                "atomic_mass": 259,
+                "category": "actinide",
+                "phase": "Solid",
+                "xpos": 16,
+                "ypos": 10,
+                "electron_configuration": "[Rn] 5f¹⁴ 7s²",
+                "electronegativity_pauling": 1.3,
+                "melting_point": 1100
+            },
+            {
+                "name": "Lawrencium",
+                "atomic_number": 103,
+                "symbol": "Lr",
+                "atomic_mass": 266,
+                "category": "actinide",
+                "phase": "Solid",
+                "xpos": 17,
+                "ypos": 10,
+                "electron_configuration": "[Rn] 5f¹⁴ 7s² 7p¹",
+                "electronegativity_pauling": 1.3,
+                "melting_point": 1900
+            },
+            {
+                "name": "Rutherfordium",
+                "atomic_number": 104,
+                "symbol": "Rf",
+                "atomic_mass": 267,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 4,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 5f¹⁴ 6d² 7s²",
+                "electronegativity_pauling": null
+            },
+            {
+                "name": "Dubnium",
+                "atomic_number": 105,
+                "symbol": "Db",
+                "atomic_mass": 268,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 5,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 5f¹⁴ 6d³ 7s²",
+                "electronegativity_pauling": null
+            },
+            {
+                "name": "Seaborgium",
+                "atomic_number": 106,
+                "symbol": "Sg",
+                "atomic_mass": 269,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 6,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 5f¹⁴ 6d⁴ 7s²",
+                "electronegativity_pauling": null
+            },
+            {
+                "name": "Bohrium",
+                "atomic_number": 107,
+                "symbol": "Bh",
+                "atomic_mass": 270,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 7,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 5f¹⁴ 6d⁵ 7s²",
+                "electronegativity_pauling": null
+            },
+            {
+                "name": "Hassium",
+                "atomic_number": 108,
+                "symbol": "Hs",
+                "atomic_mass": 269,
+                "category": "transition metal",
+                "phase": "Solid",
+                "xpos": 8,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 5f¹⁴ 6d⁶ 7s²",
+                "electronegativity_pauling": null
+            },
+            {
+                "name": "Meitnerium",
+                "atomic_number": 109,
+                "symbol": "Mt",
+                "atomic_mass": 278,
+                "category": "unknown",
+                "phase": null,
+                "xpos": 9,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 5f¹⁴ 6d⁷ 7s²",
+                "electronegativity_pauling": null
+            },
+            {
+                "name": "Darmstadtium",
+                "atomic_number": 110,
+                "symbol": "Ds",
+                "atomic_mass": 281,
+                "category": "unknown",
+                "phase": "Solid",
+                "xpos": 10,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 5f¹⁴ 6d⁸ 7s²",
+                "electronegativity_pauling": null
+            },
+            {
+                "name": "Roentgenium",
+                "atomic_number": 111,
+                "symbol": "Rg",
+                "atomic_mass": 282,
+                "category": "unknown",
+                "phase": "Solid",
+                "xpos": 11,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 5f¹⁴ 6d⁹ 7s²",
+                "electronegativity_pauling": null
+            },
+            {
+                "name": "Copernicium",
+                "atomic_number": 112,
+                "symbol": "Cn",
+                "atomic_mass": 285,
+                "category": "transition metal",
+                "phase": "Gas",
+                "xpos": 12,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 5f¹⁴ 6d¹⁰ 7s²",
+                "electronegativity_pauling": null
+            },
+            {
+                "name": "Nihonium",
+                "atomic_number": 113,
+                "symbol": "Nh",
+                "atomic_mass": 286,
+                "category": "unknown",
+                "phase": "Solid",
+                "xpos": 13,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p¹",
+                "electronegativity_pauling": null
+            },
+            {
+                "name": "Flerovium",
+                "atomic_number": 114,
+                "symbol": "Fl",
+                "atomic_mass": 289,
+                "category": "post-transition metal",
+                "phase": "Solid",
+                "xpos": 14,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p²",
+                "electronegativity_pauling": null
+            },
+            {
+                "name": "Moscovium",
+                "atomic_number": 115,
+                "symbol": "Mc",
+                "atomic_mass": 290,
+                "category": "unknown",
+                "phase": "Solid",
+                "xpos": 15,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p³",
+                "electronegativity_pauling": null
+            },
+            {
+                "name": "Livermorium",
+                "atomic_number": 116,
+                "symbol": "Lv",
+                "atomic_mass": 293,
+                "category": "unknown",
+                "phase": "Solid",
+                "xpos": 16,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁴",
+                "electronegativity_pauling": null
+            },
+            {
+                "name": "Tennessine",
+                "atomic_number": 117,
+                "symbol": "Ts",
+                "atomic_mass": 294,
+                "category": "unknown",
+                "phase": "Solid",
+                "xpos": 17,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁵",
+                "electronegativity_pauling": null
+            },
+            {
+                "name": "Oganesson",
+                "atomic_number": 118,
+                "symbol": "Og",
+                "atomic_mass": 294,
+                "category": "noble gas",
+                "phase": "Gas",
+                "xpos": 18,
+                "ypos": 7,
+                "electron_configuration": "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁶",
+                "electronegativity_pauling": null
+            }
+        ];
+        
+        const glossaryData = {
+            "atomic_mass": "The mass of an atom, typically expressed in atomic mass units (amu). It's approximately the sum of the number of protons and neutrons in the nucleus.",
+            "phase": "The state of matter at Standard Temperature and Pressure (STP): Solid, Liquid, or Gas.",
+            "electronegativity_pauling": "A measure of the tendency of an atom to attract a bonding pair of electrons. The Pauling scale is the most commonly used.",
+            "electron_configuration": "The distribution of electrons of an atom or molecule in atomic or molecular orbitals. It describes where the electrons are located around the nucleus.",
+            "isotopes": "Variants of a particular chemical element which differ in neutron number. All isotopes of a given element have the same number of protons but different numbers of neutrons in each atom.",
+            "abundance": "The percentage of a particular isotope that occurs naturally on Earth compared to all other isotopes of that element."
+        };
+        
+        // --- 2. GLOBAL STATE MANAGEMENT ---
+        const state = {
+            activeFilters: {
+                category: new Set(),
+                phase: new Set()
+            },
+            searchTerm: '',
+            isLongFormView: false,
+            currentTheme: localStorage.getItem('periodic-table-theme') || 'auto',
+            activeHeatmap: null,
+            currentElementModal: null,
+            dScene: {
+                renderer: null,
+                scene: null,
+                camera: null,
+                atomGroup: null,
+                animationId: null,
+                modelType: 'bohr' // 'bohr' or 'cloud'
+            },
+            animationSpeed: parseInt(localStorage.getItem('animation-speed')) || 100,
+            cursorColor: localStorage.getItem('cursor-color') || '#3b82f6',
+            cursorStyle: localStorage.getItem('cursor-style') || 'default',
+            accentColor: localStorage.getItem('accent-color') || '#3b82f6',
+            backgroundAnimation: localStorage.getItem('bg-animation') || 'particles',
+            isCursorActive: localStorage.getItem('cursor-active') === 'true' || true,
+            backgroundParticles: [],
+            backgroundCleanup: null,
+            threeJSLoaded: false
+        };
+        
+        // --- 3. DOM ELEMENT REFERENCES ---
+        const grid = document.getElementById('periodic-table-grid');
+        const searchInput = document.getElementById('search-input');
+        const searchResultsCount = document.getElementById('search-results-count');
+        const infoModal = document.getElementById('info-modal');
+        const infoModalContent = document.getElementById('info-modal-body');
+        const infoModalTitle = document.getElementById('info-modal-title');
+        const closeModalBtns = document.querySelectorAll('.modal-close');
+        const filtersPanel = document.getElementById('advanced-controls-panel');
+        const toggleControlsBtn = document.getElementById('toggle-controls-btn');
+        const themeSwitcherBtn = document.getElementById('theme-switcher');
+        const toggleViewBtn = document.getElementById('toggle-view-btn');
+        const cursorToggleBtn = document.getElementById('cursor-toggle');
+        const cursorStyleToggleBtn = document.getElementById('cursor-style-toggle');
+        const labBtn = document.getElementById('lab-btn');
+        const printBtn = document.getElementById('print-btn');
+        const heatmapLegend = document.getElementById('heatmap-legend');
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorOutline = document.getElementById('cursor-outline');
+        const cursorParticlesCanvas = document.getElementById('cursor-particles');
+        const cursorColorPicker = document.getElementById('cursor-color-picker');
+        const accentColorPicker = document.getElementById('accent-color-picker');
+        const animationSpeedSlider = document.getElementById('animation-speed');
+        const bgAnimationControls = document.getElementById('bg-animation-controls');
+        const dModal = document.getElementById('d-modal');
+        const dCanvas = document.getElementById('d-canvas');
+        const dModelTypeControls = document.querySelectorAll('#d-controls .control-chip');
+        const backgroundAnimations = document.getElementById('background-animations');
+        const backgroundCanvas = document.getElementById('background-canvas');
+        const glossaryModal = document.getElementById('glossary-modal');
+        const openGlossaryBtn = document.getElementById('open-glossary-btn');
+        
+        // --- 4. UTILITY FUNCTIONS ---
+        /**
+         * Safely gets a numeric value from element data
+         * @param {object} el - Element data object
+         * @param {string} prop - Property name
+         * @returns {number|null} - Numeric value or null if invalid
+         */
+        function getNumericValue(el, prop) {
+            if (el[prop] === null || el[prop] === undefined) return null;
+            
+            if (typeof el[prop] === 'number') {
+                return el[prop];
+            } else if (typeof el[prop] === 'string') {
+                const num = parseFloat(el[prop].replace(/[()]/g, ''));
+                return isNaN(num) ? null : num;
+            }
+            
+            return null;
+        }
+        
+        /**
+         * Formats a value for display with proper units and formatting
+         * @param {any} value - Value to format
+         * @param {string} unit - Unit to append
+         * @param {number} decimals - Number of decimal places
+         * @returns {string} - Formatted value
+         */
+        function formatValue(value, unit = '', decimals = 3) {
+            if (value === null || value === undefined || value === 'N/A') {
+                return 'N/A';
+            }
+            
+            if (typeof value === 'number') {
+                return `${value.toFixed(decimals)}${unit ? ` ${unit}` : ''}`;
+            }
+            
+            return value;
+        }
+        
+        /**
+         * Creates a deep copy of an object
+         * @param {object} obj - Object to copy
+         * @returns {object} - Deep copy of the object
+         */
+        function deepCopy(obj) {
+            return JSON.parse(JSON.stringify(obj));
+        }
+        
+        /**
+         * Gets the color for a heatmap value
+         * @param {number} value - Value to map
+         * @param {number} min - Minimum value in range
+         * @param {number} max - Maximum value in range
+         * @returns {string} - CSS color value
+         */
+        function getHeatmapColor(value, min, max) {
+            if (value === null || value === undefined) {
+                return 'var(--c-unknown)';
+            }
+            
+            // Normalize value to 0-1 range
+            const t = (value - min) / (max - min);
+            
+            // Clamp to 0-1 range
+            const clampedT = Math.max(0, Math.min(1, t));
+            
+            // Get the computed colors from CSS
+            const lowColor = getComputedStyle(document.documentElement).getPropertyValue('--heatmap-low').trim();
+            const highColor = getComputedStyle(document.documentElement).getPropertyValue('--heatmap-high').trim();
+            
+            // Convert hex to RGB
+            const parseColor = (color) => {
+                if (color.startsWith('#')) {
+                    const r = parseInt(color.slice(1, 3), 16);
+                    const g = parseInt(color.slice(3, 5), 16);
+                    const b = parseInt(color.slice(5, 7), 16);
+                    return [r, g, b];
+                } else if (color.startsWith('rgb')) {
+                    const match = color.match(/\d+/g);
+                    return match ? [parseInt(match[0]), parseInt(match[1]), parseInt(match[2])] : [0, 0, 0];
+                }
+                return [0, 0, 0];
+            };
+            
+            const [r1, g1, b1] = parseColor(lowColor);
+            const [r2, g2, b2] = parseColor(highColor);
+            
+            // Interpolate
+            const r = Math.round(r1 + (r2 - r1) * clampedT);
+            const g = Math.round(g1 + (g2 - g1) * clampedT);
+            const b = Math.round(b1 + (b2 - b1) * clampedT);
+            
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+        
+        /**
+         * Updates the animation speed variable
+         */
+        function updateAnimationSpeed() {
+            const factor = state.animationSpeed / 100;
+            document.documentElement.style.setProperty('--animation-speed-factor', factor);
+        }
+        
+        /**
+         * Updates the cursor color
+         */
+        function updateCursorColor() {
+            cursorDot.style.backgroundColor = state.cursorColor;
+            cursorOutline.style.borderColor = state.cursorColor;
+            document.documentElement.style.setProperty('--cursor-color', state.cursorColor);
+        }
+        
+        /**
+         * Updates the accent color
+         */
+        function updateAccentColor() {
+            document.documentElement.style.setProperty('--accent-color', state.accentColor);
+            document.documentElement.style.setProperty('--accent-color-hover', 
+                adjustColor(state.accentColor, -20));
+        }
+        
+        /**
+         * Adjusts a color by a percentage (for hover states)
+         * @param {string} color - Hex color string
+         * @param {number} amount - Percentage to adjust (-100 to 100)
+         * @returns {string} - Adjusted hex color
+         */
+        function adjustColor(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => 
+                ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).slice(-2));
+        }
+        
+        /**
+         * Shows a modal with proper focus management
+         * @param {HTMLElement} modal - Modal element to show
+         */
+        function showModal(modal) {
+            modal.classList.add('visible');
+            document.body.style.overflow = 'hidden';
+            
+            // Focus the modal title for accessibility
+            setTimeout(() => {
+                const title = modal.querySelector('.modal-title');
+                if (title) {
+                    title.tabIndex = -1;
+                    title.focus();
+                }
+            }, 100);
+        }
+        
+        /**
+         * Hides a modal with proper focus management
+         * @param {HTMLElement} modal - Modal element to hide
+         */
+        function hideModal(modal) {
+            modal.classList.remove('visible');
+            document.body.style.overflow = '';
+            
+            // Return focus to the element that opened the modal
+            if (state.currentElementModal) {
+                const elementTile = document.getElementById(`element-${state.currentElementModal.atomic_number}`);
+                if (elementTile) {
+                    elementTile.focus();
+                }
+                state.currentElementModal = null;
+            }
+        }
+        
+        // --- 5. CUSTOM CURSOR IMPLEMENTATION ---
+        /**
+         * Sets up the custom cursor with 3 premium animations
+         */
+        function setupCustomCursor() {
+            // Get cursor style preference from localStorage
+            state.cursorStyle = localStorage.getItem('cursor-style') || 'default';
+            document.body.className = document.body.className.replace(/cursor-style-\w+/, '');
+            document.body.classList.add(`cursor-style-${state.cursorStyle}`);
+            
+            // Mouse position variables
+            let mouseX = 0;
+            let mouseY = 0;
+            let cursorX = 0;
+            let cursorY = 0;
+            
+            // For particle trail effect
+            const particles = [];
+            const maxParticles = 15;
+            
+            // For magnetic effect
+            let targetX = 0;
+            let targetY = 0;
+            let interactiveElement = null;
+            let magneticStrength = 0.2;
+            
+            // Update cursor position
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                // For magnetic effect
+                const target = document.elementFromPoint(mouseX, mouseY);
+                if (target && (target.matches('a, button, .element-tile, .control-chip, .filter-chip'))) {
+                    interactiveElement = target;
+                    const rect = target.getBoundingClientRect();
+                    targetX = rect.left + rect.width / 2;
+                    targetY = rect.top + rect.height / 2;
+                } else {
+                    interactiveElement = null;
+                }
+            });
+            
+            // Animation loop for cursor
+            function animateCursor() {
+                // Smooth cursor movement
+                cursorX += (mouseX - cursorX) * 0.3;
+                cursorY += (mouseY - cursorY) * 0.3;
+                
+                // Apply position
+                cursorDot.style.left = `${cursorX}px`;
+                cursorDot.style.top = `${cursorY}px`;
+                cursorOutline.style.left = `${cursorX}px`;
+                cursorOutline.style.top = `${cursorY}px`;
+                
+                // Magnetic effect
+                if (interactiveElement && state.cursorStyle === 'magnetic') {
+                    const dx = targetX - cursorX;
+                    const dy = targetY - cursorY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance > 5) {
+                        const angle = Math.atan2(dy, dx);
+                        const force = Math.min(magneticStrength, 10 / distance);
+                        const offsetX = dx * force;
+                        const offsetY = dy * force;
+                        
+                        cursorOutline.style.transform = `translate(-50%, -50%) scale(0.7)`;
+                        cursorOutline.style.left = `${cursorX + offsetX}px`;
+                        cursorOutline.style.top = `${cursorY + offsetY}px`;
+                    } else {
+                        cursorOutline.style.transform = `translate(-50%, -50%) scale(1)`;
+                    }
+                } else {
+                    cursorOutline.style.transform = `translate(-50%, -50%) scale(1)`;
+                }
+                
+                // Particle trail effect
+                if (state.cursorStyle === 'particles') {
+                    if (Math.random() > 0.7) {
+                        particles.push({
+                            x: cursorX,
+                            y: cursorY,
+                            size: Math.random() * 6 + 2,
+                            opacity: 1,
+                            color: state.cursorColor,
+                            speedX: (Math.random() - 0.5) * 2,
+                            speedY: (Math.random() - 0.5) * 2
+                        });
+                        
+                        // Remove oldest particle if we have too many
+                        if (particles.length > maxParticles) {
+                            particles.shift();
+                        }
+                    }
+                    
+                    // Update and draw particles
+                    const ctx = cursorParticlesCanvas.getContext('2d');
+                    ctx.clearRect(0, 0, cursorParticlesCanvas.width, cursorParticlesCanvas.height);
+                    
+                    for (let i = particles.length - 1; i >= 0; i--) {
+                        const p = particles[i];
+                        p.x += p.speedX;
+                        p.y += p.speedY;
+                        p.opacity -= 0.02;
+                        p.size *= 0.98;
+                        
+                        if (p.opacity <= 0 || p.size <= 0.5) {
+                            particles.splice(i, 1);
+                            continue;
+                        }
+                        
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${parseInt(p.color.slice(1, 3), 16)}, ${parseInt(p.color.slice(3, 5), 16)}, ${parseInt(p.color.slice(5, 7), 16)}, ${p.opacity})`;
+                        ctx.fill();
+                    }
+                }
+                
+                // Color pulse effect
+                if (state.cursorStyle === 'pulse') {
+                    if (interactiveElement) {
+                        const category = interactiveElement.closest('.element-tile')?.dataset.category || 
+                                        interactiveElement.dataset.filterValue || 
+                                        'accent';
+                        const categoryClass = category.replace(/ /g, '-');
+                        const categoryColor = getComputedStyle(document.documentElement)
+                            .getPropertyValue(`--c-${categoryClass}`).trim() || state.cursorColor;
+                        
+                        cursorOutline.style.borderColor = categoryColor;
+                        cursorDot.style.backgroundColor = categoryColor;
+                    } else {
+                        cursorOutline.style.borderColor = state.cursorColor;
+                        cursorDot.style.backgroundColor = state.cursorColor;
+                    }
+                }
+                
+                requestAnimationFrame(animateCursor);
+            }
+            
+            // Initialize canvas for particle trail
+            function initCursorParticles() {
+                cursorParticlesCanvas.width = window.innerWidth;
+                cursorParticlesCanvas.height = window.innerHeight;
+            }
+            
+            // Start animation loop
+            initCursorParticles();
+            animateCursor();
+            
+            // Update cursor color
+            updateCursorColor();
+            
+            // Handle window resize for cursor particles
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(initCursorParticles, 100);
+            });
+        }
+        
+        /**
+         * Updates the cursor style icon
+         * @param {string} style - The cursor style
+         */
+        function updateCursorStyleIcon(style) {
+            const styleIcons = {
+                'default': `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>`,
+                'magnetic': `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v8m0 0V8m0 8h8M4 12h16" /></svg>`,
+                'particles': `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 15l6-6m0 0l-6-6m6 6H9a6 6 0 000 12h3a9 9 0 008.344-5.656" /></svg>`,
+                'pulse': `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H13.5V18m-8.25-6.75h.008v.008H9m3 3h.008v.008H12m-3.75 1.5h.008v.008H5.25m16.5 0v4.5m-16.5-2.25v4.5m16.5-1.5v4.5" /></svg>`
+            };
+            
+            if (cursorStyleToggleBtn) {
+                cursorStyleToggleBtn.innerHTML = styleIcons[style];
+                cursorStyleToggleBtn.setAttribute('aria-label', `Cursor Style: ${style.charAt(0).toUpperCase() + style.slice(1)}`);
+            }
+        }
+        
+        // --- 6. BACKGROUND ANIMATIONS ---
+        /**
+         * Sets up background animations
+         */
+        function setupBackgroundAnimations() {
+            // Clear any existing cleanup function
+            if (state.backgroundCleanup) {
+                state.backgroundCleanup();
+                state.backgroundCleanup = null;
+            }
+            
+            const canvas = backgroundCanvas;
+            const ctx = canvas.getContext('2d');
+            
+            // Resize canvas to match window
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            // Initialize for different animation types
+            switch (state.backgroundAnimation) {
+                case 'particles':
+                    resizeCanvas();
+                    
+                    // Create particles
+                    state.backgroundParticles = [];
+                    const particleCount = Math.min(window.innerWidth / 20, 50);
+                    
+                    for (let i = 0; i < particleCount; i++) {
+                        state.backgroundParticles.push({
+                            x: Math.random() * canvas.width,
+                            y: Math.random() * canvas.height,
+                            radius: Math.random() * 2 + 1,
+                            speedX: (Math.random() - 0.5) * 0.5,
+                            speedY: (Math.random() - 0.5) * 0.5,
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim()
+                        });
+                    }
+                    
+                    // Animation loop
+                    function animateParticles() {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        
+                        for (let i = 0; i < state.backgroundParticles.length; i++) {
+                            const p = state.backgroundParticles[i];
+                            
+                            // Draw particle
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                            ctx.fillStyle = p.color;
+                            ctx.fill();
+                            
+                            // Move particle
+                            p.x += p.speedX;
+                            p.y += p.speedY;
+                            
+                            // Wrap around screen
+                            if (p.x < 0) p.x = canvas.width;
+                            if (p.x > canvas.width) p.x = 0;
+                            if (p.y < 0) p.y = canvas.height;
+                            if (p.y > canvas.height) p.y = 0;
+                        }
+                        
+                        requestAnimationFrame(animateParticles);
+                    }
+                    
+                    // Start animation
+                    animateParticles();
+                    
+                    // Cleanup function
+                    state.backgroundCleanup = () => {
+                        // No need to cancel animation frame here as it will stop naturally
+                    };
+                    
+                    // Handle window resize
+                    window.addEventListener('resize', resizeCanvas);
+                    break;
+                    
+                case 'grid-lines':
+                    // No animation needed for grid lines
+                    backgroundAnimations.className = 'grid-lines';
+                    break;
+                    
+                case 'nebula':
+                    // No animation needed for nebula (handled by CSS)
+                    backgroundAnimations.className = 'nebula';
+                    break;
+                    
+                case 'off':
+                default:
+                    backgroundAnimations.className = '';
+                    break;
+            }
+        }
+        
+        // --- 7. DATA VALIDATION AND ENHANCEMENT ---
+        /**
+         * Validates and enhances element data
+         */
+        function validateAndEnhanceElementData() {
+            const enhancedData = [];
+            const categoryMap = {
+                'alkali metal': 'alkali-metal',
+                'alkaline earth metal': 'alkaline-earth-metal',
+                'lanthanide': 'lanthanide',
+                'actinide': 'actinide',
+                'transition metal': 'transition-metal',
+                'post-transition metal': 'post-transition-metal',
+                'metalloid': 'metalloid',
+                'polyatomic nonmetal': 'polyatomic-nonmetal',
+                'diatomic nonmetal': 'diatomic-nonmetal',
+                'noble gas': 'noble-gas',
+                'unknown': 'unknown'
+            };
+            
+            elementsData.forEach(el => {
+                try {
+                    // Create a deep copy to avoid modifying the original data
+                    const enhancedEl = JSON.parse(JSON.stringify(el));
+                    
+                    // Validate required fields
+                    if (typeof enhancedEl.atomic_number !== 'number' || enhancedEl.atomic_number <= 0) {
+                        throw new Error(`Invalid atomic number: ${enhancedEl.atomic_number}`);
+                    }
+                    
+                    if (!enhancedEl.symbol || typeof enhancedEl.symbol !== 'string') {
+                        throw new Error(`Invalid symbol: ${enhancedEl.symbol}`);
+                    }
+                    
+                    if (!enhancedEl.name || typeof enhancedEl.name !== 'string') {
+                        throw new Error(`Invalid name: ${enhancedEl.name}`);
+                    }
+                    
+                    // Standardize category name for CSS class
+                    if (enhancedEl.category && categoryMap[enhancedEl.category]) {
+                        enhancedEl.categorySlug = categoryMap[enhancedEl.category];
+                    } else {
+                        enhancedEl.categorySlug = 'unknown';
+                        enhancedEl.category = 'Unknown';
+                    }
+                    
+                    // Normalize atomic mass format
+                    if (enhancedEl.atomic_mass) {
+                        // Convert to string if it's a number
+                        const massStr = typeof enhancedEl.atomic_mass === 'number' ? enhancedEl.atomic_mass.toString() : enhancedEl.atomic_mass;
+                        
+                        // Remove any existing parentheses
+                        const cleanMass = massStr.replace(/[()]/g, '');
+                        
+                        // Add parentheses if it was an estimated value
+                        enhancedEl.atomic_mass_display = massStr.includes('(') ? `(${cleanMass})` : cleanMass;
+                    } else {
+                        enhancedEl.atomic_mass_display = 'N/A';
+                    }
+                    
+                    // Ensure numeric properties are properly typed
+                    const numericProperties = [
+                        'atomic_mass', 'density', 'atomic_radius', 
+                        'melting_point', 'boiling_point', 'electronegativity_pauling'
+                    ];
+                    
+                    numericProperties.forEach(prop => {
+                        if (enhancedEl[prop] !== null && enhancedEl[prop] !== undefined) {
+                            // Try to convert to number if it's a string
+                            if (typeof enhancedEl[prop] === 'string') {
+                                const numValue = parseFloat(enhancedEl[prop].replace(/[()]/g, ''));
+                                if (!isNaN(numValue)) {
+                                    enhancedEl[prop] = numValue;
+                                }
+                            }
+                        }
+                    });
+                    
+                    // Add derived properties
+                    enhancedEl.isStable = !enhancedEl.atomic_mass.toString().includes('(');
+                    enhancedEl.groupName = getGroupName(enhancedEl.group);
+                    enhancedEl.periodName = getPeriodName(enhancedEl.period);
+                    
+                    enhancedData.push(enhancedEl);
+                } catch (error) {
+                    console.error(`Error processing element data:`, el, error.message);
+                }
+            });
+            
+            return enhancedData;
+        }
+        
+        /**
+         * Helper function to get group name
+         * @param {number} groupNumber - Group number
+         * @returns {string} - Group name
+         */
+        function getGroupName(groupNumber) {
+            const groupNames = {
+                1: 'Alkali Metals',
+                2: 'Alkaline Earth Metals',
+                3: 'Group 3',
+                4: 'Group 4',
+                5: 'Group 5',
+                6: 'Group 6',
+                7: 'Group 7',
+                8: 'Group 8',
+                9: 'Group 9',
+                10: 'Group 10',
+                11: 'Group 11',
+                12: 'Group 12',
+                13: 'Boron Group',
+                14: 'Carbon Group',
+                15: 'Nitrogen Group',
+                16: 'Chalcogens',
+                17: 'Halogens',
+                18: 'Noble Gases'
+            };
+            return groupNames[groupNumber] || `Group ${groupNumber}`;
+        }
+        
+        /**
+         * Helper function to get period name
+         * @param {number} periodNumber - Period number
+         * @returns {string} - Period name
+         */
+        function getPeriodName(periodNumber) {
+            const periodNames = {
+                1: 'Period 1',
+                2: 'Period 2',
+                3: 'Period 3',
+                4: 'Period 4',
+                5: 'Period 5',
+                6: 'Period 6',
+                7: 'Period 7'
+            };
+            return periodNames[periodNumber] || `Period ${periodNumber}`;
+        }
+        
+        // --- 8. RENDERING & UI ---
+        /**
+         * Creates the HTML for a single element tile.
+         * @param {object} el - The element data object.
+         * @returns {string} - The HTML string for the tile.
+         */
+        function createElementTileHTML(el) {
+            // Handle missing data gracefully
+            if (!el.atomic_number || !el.symbol || !el.name) {
+                console.error("Incomplete element data:", el);
+                return '';
+            }
+            
+            // Calculate animation delay (capped at 500ms)
+            const animationDelay = Math.min(el.atomic_number * 5, 500);
+            
+            return `
+                <div class="element-tile" id="element-${el.atomic_number}"
+                     data-atomic-number="${el.atomic_number}"
+                     data-category="${el.categorySlug}"
+                     style="grid-column: ${el.xpos}; grid-row: ${el.ypos}; animation-delay: ${animationDelay}ms; background-color: var(--c-${el.categorySlug});"
+                     role="button" tabindex="0" aria-label="${el.name} (Atomic Number: ${el.atomic_number})">
+                    <div class="atomic-number">${el.atomic_number}</div>
+                    <div class="symbol">${el.symbol}</div>
+                    <div class="name">${el.name}</div>
+                    <div class="atomic-mass">${el.atomic_mass_display}</div>
+                </div>
+            `;
+        }
+        
+        /**
+         * Renders the entire periodic table grid.
+         */
+        function renderTable() {
+            let tableHTML = '';
+            const workingElements = deepCopy(elementsData);
+            
+            workingElements.forEach(el => {
+                // Reset positions for standard view
+                const originalEl = elementsData.find(e => e.atomic_number === el.atomic_number);
+                el.xpos = originalEl.xpos;
+                el.ypos = originalEl.ypos;
+                
+                // Adjust positions for long form view
+                if (state.isLongFormView) {
+                    if (el.category === 'lanthanide') {
+                        el.ypos = 6;
+                        el.xpos = el.atomic_number - 57 + 4; // Start at position 4, not 3
+                    } else if (el.category === 'actinide') {
+                        el.ypos = 7;
+                        el.xpos = el.atomic_number - 89 + 4; // Start at position 4, not 3
+                    } else if (el.atomic_number > 71 && el.atomic_number < 89) { // After Lu
+                        el.xpos = el.atomic_number - 71 + 18;
+                    } else if (el.atomic_number > 103) { // After Lr
+                        el.xpos = el.atomic_number - 103 + 18;
+                    }
+                }
+                
+                tableHTML += createElementTileHTML(el);
+            });
+            
+            grid.innerHTML = tableHTML;
+            grid.classList.toggle('long-form', state.isLongFormView);
+            applyFiltersAndSearch();
+            
+            // Update heatmap if active
+            if (state.activeHeatmap) {
+                applyHeatmap(state.activeHeatmap, false);
+            }
+        }
+        
+        /**
+         * Populates and displays the element detail modal.
+         * @param {number} atomicNumber - The atomic number of the element to show.
+         */
+        function showElementModal(atomicNumber) {
+            const el = elementsData.find(e => e.atomic_number === atomicNumber);
+            if (!el) {
+                console.error(`Element with atomic number ${atomicNumber} not found`);
+                alert(`Error: Element ${atomicNumber} could not be found.`);
+                return;
+            }
+            
+            // Store current element for focus management
+            state.currentElementModal = el;
+            
+            // Format properties for display
+            const formattedData = {
+                name: el.name,
+                symbol: el.symbol,
+                atomicNumber: el.atomic_number,
+                category: el.category,
+                phase: el.phase || 'N/A',
+                atomicMass: formatValue(getNumericValue(el, 'atomic_mass'), '', 3),
+                density: formatValue(getNumericValue(el, 'density'), 'g/L', 3),
+                meltingPoint: formatValue(getNumericValue(el, 'melting_point'), 'K', 2),
+                boilingPoint: formatValue(getNumericValue(el, 'boiling_point'), 'K', 2),
+                atomicRadius: formatValue(getNumericValue(el, 'atomic_radius'), 'pm', 0),
+                electronegativity: formatValue(getNumericValue(el, 'electronegativity_pauling'), '', 2),
+                oxidationStates: el.oxidation_states || 'N/A',
+                electronConfiguration: el.electron_configuration || 'N/A',
+                discoveredBy: el.discovered_by || 'N/A',
+                yearDiscovered: el.year_discovered || 'N/A'
+            };
+            
+            // Format category for CSS class
+            const categoryClass = el.categorySlug;
+            
+            infoModalTitle.textContent = `${el.name} (${el.symbol})`;
+            
+            // Create isotopes section if available
+            let isotopesHTML = '';
+            if (el.isotopes && el.isotopes.length > 0) {
+                isotopesHTML = `
+                    <div class="modal-section">
+                        <h3>Isotopes</h3>
+                        <div class="property-grid">
+                            ${el.isotopes.map(iso => `
+                                <div class="property-item">
+                                    <span class="property-label">${iso.mass}</span>
+                                    <span class="property-value">
+                                        Abundance: ${iso.abundance}
+                                    </span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            infoModalContent.innerHTML = `
+                <div class="summary-box">
+                    <div class="summary-symbol" style="color: var(--c-${categoryClass})">${el.symbol}</div>
+                    <div class="summary-details">
+                        <div class="summary-name">${el.atomic_number}. ${el.name}</div>
+                        <div class="summary-category" style="background-color: var(--c-${categoryClass})">${el.category}</div>
+                    </div>
+                </div>
+                <div class="property-grid">
+                    <div class="property-item"><span class="property-label">Atomic Mass</span><span class="property-value">${formattedData.atomicMass}</span></div>
+                    <div class="property-item"><span class="property-label">Phase at STP</span><span class="property-value">${formattedData.phase}</span></div>
+                    <div class="property-item"><span class="property-label">Density (g/L)</span><span class="property-value">${formattedData.density}</span></div>
+                    <div class="property-item"><span class="property-label">Melting Point (K)</span><span class="property-value">${formattedData.meltingPoint}</span></div>
+                    <div class="property-item"><span class="property-label">Boiling Point (K)</span><span class="property-value">${formattedData.boilingPoint}</span></div>
+                    <div class="property-item"><span class="property-label">Atomic Radius (pm)</span><span class="property-value">${formattedData.atomicRadius}</span></div>
+                    <div class="property-item"><span class="property-label">Electronegativity</span><span class="property-value">${formattedData.electronegativity}</span></div>
+                    <div class="property-item"><span class="property-label">Oxidation States</span><span class="property-value">${formattedData.oxidationStates}</span></div>
+                </div>
+                <div class="modal-section">
+                    <h3>Configuration & Discovery</h3>
+                    <div class="property-grid">
+                        <div class="property-item" style="grid-column: 1 / -1;">
+                            <span class="property-label glossary-term" data-term="electron_configuration">Electron Configuration</span>
+                            <span class="property-value">${formattedData.electronConfiguration}</span>
+                        </div>
+                        <div class="property-item">
+                            <span class="property-label">Discovered By</span>
+                            <span class="property-value">${formattedData.discoveredBy}</span>
+                        </div>
+                        <div class="property-item">
+                            <span class="property-label">Year Discovered</span>
+                            <span class="property-value">${formattedData.yearDiscovered}</span>
+                        </div>
+                    </div>
+                </div>
+                ${isotopesHTML}
+                <button id="view-3d-btn" class="btn" data-atomic-number="${el.atomic_number}">View 3D Atomic Model</button>
+            `;
+            
+            showModal(infoModal);
+            
+            // Set up event listener for 3D model button
+            document.getElementById('view-3d-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                hideModal(infoModal);
+                show3DModelModal(el.atomic_number);
+            });
+            
+            // Set up glossary term click handlers
+            infoModalContent.querySelectorAll('.glossary-term').forEach(term => {
+                term.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const termName = e.target.dataset.term;
+                    showGlossaryTerm(termName);
+                });
+            });
+        }
+        
+        /**
+         * Shows the glossary modal for a specific term
+         * @param {string} term - The term to highlight
+         */
+        function showGlossaryTerm(term) {
+            if (!glossaryData[term]) {
+                console.error(`Glossary term not found: ${term}`);
+                return;
+            }
+            
+            // Create the glossary content
+            const glossaryContent = `
+                <div class="property-grid">
+                    <div class="property-item" style="grid-column: 1 / -1;">
+                        <span class="property-label">${term.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
+                        <span class="property-value">${glossaryData[term]}</span>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('glossary-modal-body').innerHTML = glossaryContent;
+            showModal(glossaryModal);
+        }
+        
+        /**
+         * Creates filter chips for categories and states.
+         */
+        function createFilterChips() {
+            // Get unique categories and phases
+            const categories = [...new Set(elementsData.map(el => el.category).filter(Boolean))];
+            const phases = [...new Set(elementsData.map(el => el.phase).filter(Boolean))];
+            
+            // Create category filter chips
+            const categoryFiltersContainer = document.getElementById('category-filters');
+            categoryFiltersContainer.innerHTML = categories.map(cat => {
+                const categorySlug = cat.toLowerCase().replace(/ /g, '-');
+                return `
+                    <div class="control-chip" data-filter-type="category" data-filter-value="${cat}" 
+                           role="button" aria-pressed="false" tabindex="0">
+                        ${cat}
+                    </div>
+                `;
+            }).join('');
+            
+            // Create phase filter chips
+            const stateFiltersContainer = document.getElementById('state-filters');
+            stateFiltersContainer.innerHTML = phases.map(st => 
+                `<div class="control-chip" data-filter-type="phase" data-filter-value="${st}" 
+                       role="button" aria-pressed="false" tabindex="0">
+                    ${st}
+                </div>`
+            ).join('');
+        }
+        
+        // --- 9. LOGIC & EVENT HANDLERS ---
+        /**
+         * Applies current filters and search term to the grid.
+         */
+        function applyFiltersAndSearch() {
+            const searchTerm = state.searchTerm.toLowerCase();
+            const { category, phase } = state.activeFilters;
+            
+            let visibleCount = 0;
+            
+            document.querySelectorAll('.element-tile').forEach(tile => {
+                const elNum = parseInt(tile.dataset.atomicNumber);
+                const el = elementsData.find(e => e.atomic_number === elNum);
+                
+                if (!el) return;
+                
+                const searchMatch = searchTerm === '' || 
+                                    el.name.toLowerCase().includes(searchTerm) ||
+                                    el.symbol.toLowerCase().includes(searchTerm) ||
+                                    el.atomic_number.toString().includes(searchTerm);
+                
+                const categoryMatch = category.size === 0 || 
+                                     (el.category && category.has(el.category));
+                
+                const phaseMatch = phase.size === 0 || 
+                                 (el.phase && phase.has(el.phase));
+                
+                if (searchMatch && categoryMatch && phaseMatch) {
+                    tile.classList.remove('filtered-out');
+                    visibleCount++;
+                } else {
+                    tile.classList.add('filtered-out');
+                }
+            });
+            
+            // Update search results count for accessibility
+            searchResultsCount.textContent = `${visibleCount} elements found matching your search`;
+        }
+        
+        /**
+         * Applies heatmap visualization to the periodic table
+         * @param {string} property - The property to visualize
+         * @param {boolean} setActive - Whether to set this as the active heatmap
+         */
+        function applyHeatmap(property, setActive = true) {
+            if (property === 'clear') {
+                state.activeHeatmap = null;
+                heatmapLegend.classList.remove('visible');
+                renderTable(); // Re-render to reset colors
+                return;
+            }
+            
+            // Get all valid values for this property
+            const values = elementsData
+                .map(el => getNumericValue(el, property))
+                .filter(val => val !== null && val !== undefined);
+            
+            if (values.length === 0) {
+                console.error(`No valid values found for property: ${property}`);
+                return;
+            }
+            
+            const min = Math.min(...values);
+            const max = Math.max(...values);
+            
+            // Update state
+            if (setActive) {
+                state.activeHeatmap = property;
+                heatmapLegend.classList.add('visible');
+                document.querySelectorAll('#heatmap-controls .control-chip').forEach(chip => {
+                    chip.classList.toggle('active', chip.dataset.heatmapType === property);
+                });
+            }
+            
+            // Update legend gradient
+            document.getElementById('heatmap-gradient').style.background = 
+                `linear-gradient(to right, var(--heatmap-low), var(--heatmap-high))`;
+            
+            // Apply colors to elements
+            elementsData.forEach(el => {
+                const tile = document.getElementById(`element-${el.atomic_number}`);
+                if (!tile) return;
+                
+                const value = getNumericValue(el, property);
+                if (value === null || value === undefined) {
+                    tile.style.backgroundColor = 'var(--c-unknown)';
+                } else {
+                    tile.style.backgroundColor = getHeatmapColor(value, min, max);
+                }
+            });
+        }
+        
+        /**
+         * Handles search input with debouncing.
+         */
+        let debounceTimer;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                state.searchTerm = e.target.value;
+                applyFiltersAndSearch();
+            }, 250);
+        });
+        
+        /**
+         * Handles clicks on the periodic table grid.
+         */
+        grid.addEventListener('click', (e) => {
+            const tile = e.target.closest('.element-tile');
+            if (tile) {
+                showElementModal(parseInt(tile.dataset.atomicNumber));
+            }
+        });
+        
+        /**
+         * Handles keyboard navigation on the grid.
+         */
+        grid.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                const tile = e.target.closest('.element-tile');
+                if (tile) {
+                    e.preventDefault();
+                    showElementModal(parseInt(tile.dataset.atomicNumber));
+                }
+            }
+        });
+        
+        /**
+         * Handles clicks on filter chips.
+         */
+        filtersPanel.addEventListener('click', (e) => {
+            const chip = e.target.closest('.control-chip');
+            if (chip) {
+                if (chip.dataset.filterType) {
+                    const type = chip.dataset.filterType;
+                    const value = chip.dataset.filterValue;
+                    
+                    chip.classList.toggle('active');
+                    chip.setAttribute('aria-pressed', chip.classList.contains('active'));
+                    
+                    // Update filter state
+                    if (state.activeFilters[type].has(value)) {
+                        state.activeFilters[type].delete(value);
+                    } else {
+                        state.activeFilters[type].add(value);
+                    }
+                    
+                    applyFiltersAndSearch();
+                }
+                
+                if (chip.dataset.heatmapType) {
+                    if (chip.dataset.heatmapType === 'clear') {
+                        applyHeatmap('clear');
+                    } else {
+                        applyHeatmap(chip.dataset.heatmapType);
+                    }
+                }
+                
+                if (chip.dataset.bgAnim) {
+                    // Update background animation
+                    state.backgroundAnimation = chip.dataset.bgAnim;
+                    localStorage.setItem('bg-animation', state.backgroundAnimation);
+                    
+                    // Update UI
+                    document.querySelectorAll('#bg-animation-controls .control-chip').forEach(c => {
+                        c.classList.toggle('active', c.dataset.bgAnim === state.backgroundAnimation);
+                    });
+                    
+                    // Apply the animation
+                    setupBackgroundAnimations();
+                }
+            }
+        });
+        
+        /**
+         * Handles keyboard interaction for filter chips.
+         */
+        filtersPanel.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                const chip = e.target.closest('.control-chip');
+                if (chip) {
+                    e.preventDefault();
+                    
+                    if (chip.dataset.filterType) {
+                        const type = chip.dataset.filterType;
+                        const value = chip.dataset.filterValue;
+                        
+                        chip.classList.toggle('active');
+                        chip.setAttribute('aria-pressed', chip.classList.contains('active'));
+                        
+                        // Update filter state
+                        if (state.activeFilters[type].has(value)) {
+                            state.activeFilters[type].delete(value);
+                        } else {
+                            state.activeFilters[type].add(value);
+                        }
+                        
+                        applyFiltersAndSearch();
+                    }
+                    
+                    if (chip.dataset.heatmapType) {
+                        if (chip.dataset.heatmapType === 'clear') {
+                            applyHeatmap('clear');
+                        } else {
+                            applyHeatmap(chip.dataset.heatmapType);
+                        }
+                    }
+                }
+            }
+        });
+        
+        /**
+         * Handles toggling the filters panel visibility.
+         */
+        toggleControlsBtn.addEventListener('click', () => {
+            filtersPanel.classList.toggle('hidden');
+            const isHidden = filtersPanel.classList.contains('hidden');
+            toggleControlsBtn.setAttribute('aria-expanded', !isHidden);
+            toggleControlsBtn.setAttribute('aria-label', isHidden ? 'Show Advanced Controls' : 'Hide Advanced Controls');
+        });
+        
+        /**
+         * Handles toggling between standard and long-form views.
+         */
+        toggleViewBtn.addEventListener('click', () => {
+            state.isLongFormView = !state.isLongFormView;
+            renderTable();
+            toggleViewBtn.setAttribute('aria-label', state.isLongFormView ? 'Switch to Standard View' : 'Switch to Long Form View');
+        });
+        
+        /**
+         * Handles custom cursor toggle.
+         */
+        cursorToggleBtn.addEventListener('click', () => {
+            state.isCursorActive = !state.isCursorActive;
+            localStorage.setItem('cursor-active', state.isCursorActive);
+            
+            document.body.classList.toggle('custom-cursor-active', state.isCursorActive);
+            
+            // Update button state
+            cursorToggleBtn.setAttribute('aria-label', state.isCursorActive ? 'Disable Custom Cursor' : 'Enable Custom Cursor');
+        });
+        
+        /**
+         * Handles cursor style toggle.
+         */
+        cursorStyleToggleBtn.addEventListener('click', () => {
+            const styles = ['default', 'magnetic', 'particles', 'pulse'];
+            const currentIndex = styles.indexOf(state.cursorStyle);
+            const nextStyle = styles[(currentIndex + 1) % styles.length];
+            
+            // Update state
+            state.cursorStyle = nextStyle;
+            localStorage.setItem('cursor-style', nextStyle);
+            
+            // Update UI
+            document.body.className = document.body.className.replace(/cursor-style-\w+/, '');
+            document.body.classList.add(`cursor-style-${nextStyle}`);
+            
+            // Update button icon
+            updateCursorStyleIcon(nextStyle);
+        });
+        
+        /**
+         * Handles lab button click to redirect to lab.html
+         */
+        labBtn.addEventListener('click', () => {
+            window.location.href = 'lab.html';
+        });
+        
+        /**
+         * Handles print functionality.
+         */
+        printBtn.addEventListener('click', () => {
+            window.print();
+        });
+        
+        /**
+         * Handles closing modals.
+         */
+        closeModalBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const modal = btn.closest('.modal-overlay');
+                if (modal) {
+                    hideModal(modal);
+                }
+            });
+        });
+        
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    hideModal(modal);
+                }
+            });
+        });
+        
+        // Close modals with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.visible').forEach(modal => {
+                    hideModal(modal);
+                });
+                
+                // Cleanup 3D model if visible
+                if (dModal.classList.contains('visible')) {
+                    cleanup3D();
+                }
+            }
+        });
+        
+        // Open glossary modal
+        openGlossaryBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Load glossary content
+            let glossaryHTML = '<div class="property-grid">';
+            Object.keys(glossaryData).forEach(term => {
+                glossaryHTML += `
+                    <div class="property-item" style="grid-column: 1 / -1;">
+                        <span class="property-label glossary-term" data-term="${term}" style="cursor: pointer; text-decoration: underline; text-decoration-style: dotted;">
+                            ${term.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </span>
+                        <span class="property-value">${glossaryData[term]}</span>
+                    </div>
+                `;
+            });
+            glossaryHTML += '</div>';
+            
+            document.getElementById('glossary-modal-body').innerHTML = glossaryHTML;
+            showModal(glossaryModal);
+            
+            // Set up glossary term click handlers
+            document.querySelectorAll('.glossary-term').forEach(term => {
+                term.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const termName = e.target.dataset.term;
+                    showGlossaryTerm(termName);
+                });
+            });
+        });
+        
+        // --- 10. 3D ATOMIC MODEL SYSTEM ---
+        /**
+         * Sets up the 3D atomic model visualization.
+         * @param {number} atomicNumber - Atomic number of the element to visualize
+         */
+        function show3DModelModal(atomicNumber) {
+            const el = elementsData.find(e => e.atomic_number === atomicNumber);
+            if (!el) return;
+            
+            // Update modal title
+            document.getElementById('d-modal-title').textContent = 
+                `3D Atomic Model: ${el.name} (${el.symbol})`;
+            
+            // Show the modal
+            showModal(dModal);
+            
+            // Initialize the 3D scene
+            init3DModel(atomicNumber);
+        }
+        
+        /**
+         * Initializes the 3D model scene.
+         * @param {number} atomicNumber - Atomic number of the element to visualize
+         */
+        function init3DModel(atomicNumber) {
+            cleanup3D();
+            
+            const el = elementsData.find(e => e.atomic_number === atomicNumber);
+            if (!el) return;
+            
+            // Check if THREE.js is loaded
+            if (typeof THREE === 'undefined') {
+                // Load THREE.js dynamically
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+                script.onload = () => {
+                    state.threeJSLoaded = true;
+                    init3DModel(atomicNumber);
+                };
+                script.onerror = (error) => {
+                    console.error('Failed to load THREE.js:', error);
+                    alert('3D visualization failed to load. Please check your internet connection and try again.');
+                };
+                document.head.appendChild(script);
+                return;
+            }
+            
+            state.threeJSLoaded = true;
+            
+            // Get canvas dimensions
+            const canvasContainer = document.getElementById('d-canvas-container');
+            const width = canvasContainer.clientWidth;
+            const height = canvasContainer.clientHeight;
+            
+            // Create scene
+            state.dScene.scene = new THREE.Scene();
+            state.dScene.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+            state.dScene.camera.position.z = 15;
+            
+            // Create renderer
+            state.dScene.renderer = new THREE.WebGLRenderer({ 
+                canvas: dCanvas,
+                antialias: true,
+                alpha: true
+            });
+            state.dScene.renderer.setSize(width, height);
+            state.dScene.renderer.setPixelRatio(window.devicePixelRatio);
+            state.dScene.renderer.setClearColor(0x000000, 0); // Transparent background
+            
+            // Add lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            state.dScene.scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(1, 1, 1);
+            state.dScene.scene.add(directionalLight);
+            
+            // Create atom group
+            state.dScene.atomGroup = new THREE.Group();
+            state.dScene.scene.add(state.dScene.atomGroup);
+            
+            // Create nucleus
+            createNucleus(el);
+            
+            // Create electron shells based on model type
+            if (state.dScene.modelType === 'bohr') {
+                createBohrModel(el);
+            } else {
+                createElectronCloud(el);
+            }
+            
+            // Start animation
+            animate3D();
+        }
+        
+        /**
+         * Creates the nucleus for the 3D model.
+         * @param {object} el - Element data
+         */
+        function createNucleus(el) {
+            const categoryClass = el.categorySlug;
+            const elementColor = getComputedStyle(document.documentElement)
+                .getPropertyValue(`--c-${categoryClass}`).trim();
+            
+            // Nucleus geometry and material
+            const nucleusGeometry = new THREE.SphereGeometry(2, 32, 32);
+            const nucleusMaterial = new THREE.MeshPhongMaterial({ 
+                color: elementColor,
+                emissive: elementColor,
+                emissiveIntensity: 0.2
+            });
+            
+            // Create nucleus mesh
+            const nucleus = new THREE.Mesh(nucleusGeometry, nucleusMaterial);
+            state.dScene.atomGroup.add(nucleus);
+            
+            // Add protons and neutrons as smaller spheres
+            const protons = el.atomic_number;
+            const neutrons = Math.round(el.atomic_mass - protons);
+            
+            // Create proton spheres
+            for (let i = 0; i < protons; i++) {
+                const protonGeometry = new THREE.SphereGeometry(0.3, 16, 16);
+                const protonMaterial = new THREE.MeshPhongMaterial({ 
+                    color: 0xff0000,
+                    emissive: 0x880000,
+                    emissiveIntensity: 0.5
+                });
+                
+                const proton = new THREE.Mesh(protonGeometry, protonMaterial);
+                
+                // Position protons randomly inside nucleus
+                const radius = 1.5;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                const x = radius * Math.sin(phi) * Math.cos(theta);
+                const y = radius * Math.sin(phi) * Math.sin(theta);
+                const z = radius * Math.cos(phi);
+                
+                proton.position.set(x, y, z);
+                proton.userData = { type: 'proton' };
+                nucleus.add(proton);
+            }
+            
+            // Create neutron spheres
+            for (let i = 0; i < neutrons; i++) {
+                const neutronGeometry = new THREE.SphereGeometry(0.3, 16, 16);
+                const neutronMaterial = new THREE.MeshPhongMaterial({ 
+                    color: 0x444444,
+                    emissive: 0x222222,
+                    emissiveIntensity: 0.3
+                });
+                
+                const neutron = new THREE.Mesh(neutronGeometry, neutronMaterial);
+                
+                // Position neutrons randomly inside nucleus
+                const radius = 1.5;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                const x = radius * Math.sin(phi) * Math.cos(theta);
+                const y = radius * Math.sin(phi) * Math.sin(theta);
+                const z = radius * Math.cos(phi);
+                
+                neutron.position.set(x, y, z);
+                neutron.userData = { type: 'neutron' };
+                nucleus.add(neutron);
+            }
+        }
+        
+        /**
+         * Creates Bohr model for the 3D visualization.
+         * @param {object} el - Element data
+         */
+        function createBohrModel(el) {
+            const electrons = el.atomic_number;
+            const shellCaps = [2, 8, 18, 32, 32, 18, 8]; // Maximum electrons per shell
+            
+            let electronsPlaced = 0;
+            let shellRadius = 4;
+            
+            for (let i = 0; i < shellCaps.length && electronsPlaced < electrons; i++) {
+                const electronsInShell = Math.min(shellCaps[i], electrons - electronsPlaced);
+                
+                // Create shell ring
+                const shellGeometry = new THREE.RingGeometry(shellRadius - 0.1, shellRadius + 0.1, 64);
+                const shellMaterial = new THREE.MeshBasicMaterial({ 
+                    color: 0x888888,
+                    transparent: true,
+                    opacity: 0.3,
+                    side: THREE.DoubleSide
+                });
+                
+                const shell = new THREE.Mesh(shellGeometry, shellMaterial);
+                shell.rotation.x = Math.PI / 2;
+                state.dScene.atomGroup.add(shell);
+                
+                // Create electrons
+                for (let j = 0; j < electronsInShell; j++) {
+                    const electronGeometry = new THREE.SphereGeometry(0.4, 16, 16);
+                    const electronMaterial = new THREE.MeshPhongMaterial({ 
+                        color: 0x0088ff,
+                        emissive: 0x0044ff,
+                        emissiveIntensity: 0.5
+                    });
+                    
+                    const electron = new THREE.Mesh(electronGeometry, electronMaterial);
+                    
+                    // Position electron on the shell
+                    const angle = (j / electronsInShell) * Math.PI * 2;
+                    electron.position.x = Math.cos(angle) * shellRadius;
+                    electron.position.y = Math.sin(angle) * shellRadius;
+                    
+                    // Store electron data for animation
+                    electron.userData = { 
+                        shellIndex: i,
+                        angle: angle,
+                        speed: 0.01 + i * 0.002,
+                        radius: shellRadius
+                    };
+                    
+                    state.dScene.atomGroup.add(electron);
+                }
+                
+                electronsPlaced += electronsInShell;
+                shellRadius += 3; // Increase radius for next shell
+            }
+        }
+        
+        /**
+         * Creates electron cloud model for the 3D visualization.
+         * @param {object} el - Element data
+         */
+        function createElectronCloud(el) {
+            const electrons = el.atomic_number;
+            const maxElectrons = 50; // Limit for performance
+            
+            // Create electron cloud
+            const electronGeometry = new THREE.BufferGeometry();
+            const electronCount = Math.min(electrons, maxElectrons);
+            const positions = new Float32Array(electronCount * 3);
+            
+            // Generate random positions based on electron configuration
+            for (let i = 0; i < electronCount; i++) {
+                // Spherical coordinates for electron probability cloud
+                const radius = 2 + Math.random() * 6;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                
+                // Convert to Cartesian coordinates
+                positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+                positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+                positions[i * 3 + 2] = radius * Math.cos(phi);
+            }
+            
+            electronGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            
+            // Create electron material
+            const electronMaterial = new THREE.PointsMaterial({
+                size: 0.2,
+                color: 0x0088ff,
+                transparent: true,
+                opacity: 0.7
+            });
+            
+            // Create electron points
+            const electronsCloud = new THREE.Points(electronGeometry, electronMaterial);
+            state.dScene.atomGroup.add(electronsCloud);
+            
+            // Add rotation for dynamic effect
+            electronsCloud.userData = {
+                rotationSpeed: 0.005
+            };
+        }
+        
+        /**
+         * Animates the 3D model.
+         */
+        function animate3D() {
+            if (!state.dScene.scene) return;
+            
+            // Rotate the entire atom
+            state.dScene.atomGroup.rotation.y += 0.005;
+            
+            // Animate electrons based on model type
+            if (state.dScene.modelType === 'bohr') {
+                // Animate Bohr model electrons
+                state.dScene.scene.traverse(object => {
+                    if (object.userData && object.userData.shellIndex !== undefined) {
+                        // Update electron position based on its angle
+                        object.userData.angle += object.userData.speed;
+                        object.position.x = Math.cos(object.userData.angle) * object.userData.radius;
+                        object.position.y = Math.sin(object.userData.angle) * object.userData.radius;
+                    }
+                });
+            } else {
+                // Animate electron cloud rotation
+                state.dScene.scene.traverse(object => {
+                    if (object.userData && object.userData.rotationSpeed) {
+                        object.rotation.y += object.userData.rotationSpeed;
+                    }
+                });
+            }
+            
+            state.dScene.renderer.render(state.dScene.scene, state.dScene.camera);
+            state.dScene.animationId = requestAnimationFrame(animate3D);
+        }
+        
+        /**
+         * Cleans up the 3D scene resources.
+         */
+        function cleanup3D() {
+            if (state.dScene.animationId) {
+                cancelAnimationFrame(state.dScene.animationId);
+                state.dScene.animationId = null;
+            }
+            
+            if (state.dScene.renderer) {
+                state.dScene.renderer.dispose();
+                state.dScene.renderer = null;
+            }
+            
+            if (state.dScene.scene) {
+                // Dispose of all objects in the scene
+                state.dScene.scene.traverse(object => {
+                    if (object.geometry) object.geometry.dispose();
+                    if (object.material) {
+                        if (Array.isArray(object.material)) {
+                            for (const material of object.material) {
+                                material.dispose();
+                            }
+                        } else {
+                            object.material.dispose();
+                        }
+                    }
+                });
+                
+                state.dScene.scene = null;
+            }
+            
+            state.dScene.atomGroup = null;
+            state.dScene.camera = null;
+        }
+        
+        // Handle 3D model type changes
+        dModelTypeControls.forEach(control => {
+            control.addEventListener('click', () => {
+                document.querySelectorAll('#d-controls .control-chip').forEach(c => {
+                    c.classList.remove('active');
+                });
+                control.classList.add('active');
+                state.dScene.modelType = control.dataset.modelType;
+                
+                // Reinitialize the model with the new type
+                const atomicNumber = parseInt(dModal.querySelector('.modal-title').dataset.atomicNumber);
+                if (atomicNumber) {
+                    init3DModel(atomicNumber);
+                }
+            });
+        });
+        
+        // Handle window resize for 3D model
+        window.addEventListener('resize', () => {
+            if (dModal.classList.contains('visible') && state.dScene.renderer && dCanvas) {
+                const canvasContainer = document.getElementById('d-canvas-container');
+                const width = canvasContainer.clientWidth;
+                const height = canvasContainer.clientHeight;
+                
+                state.dScene.camera.aspect = width / height;
+                state.dScene.camera.updateProjectionMatrix();
+                state.dScene.renderer.setSize(width, height);
+            }
+        });
+        
+        // --- 11. THEME & CUSTOMIZATION ---
+        const themes = [
+            { name: 'auto', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" /></svg>` },
+            { name: 'light', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" /></svg>` },
+            { name: 'dark', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" /></svg>` },
+            { name: 'high-contrast', icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3.75a9 9 0 000 16.5v-16.5zM12 3.75a9 9 0 010 16.5v-16.5z" /></svg>`}
+        ];
+        
+        /**
+         * Applies the specified theme.
+         * @param {string} themeName - The name of the theme to apply
+         */
+        function applyTheme(themeName) {
+            // Remove all theme classes
+            document.documentElement.classList.remove('dark-theme', 'high-contrast-theme');
+            
+            // Apply the new theme
+            if (themeName === 'dark') {
+                document.documentElement.classList.add('dark-theme');
+            } else if (themeName === 'high-contrast') {
+                document.documentElement.classList.add('high-contrast-theme');
+            } else if (themeName === 'auto') {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add('dark-theme');
+                }
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('periodic-table-theme', themeName);
+            state.currentTheme = themeName;
+            
+            // Update the theme switcher icon
+            updateThemeSwitcherIcon();
+        }
+        
+        /**
+         * Updates the theme switcher button icon.
+         */
+        function updateThemeSwitcherIcon() {
+            const currentThemeObject = themes.find(t => t.name === state.currentTheme);
+            themeSwitcherBtn.innerHTML = currentThemeObject.icon;
+            themeSwitcherBtn.setAttribute('aria-label', `Switch Theme (Current: ${state.currentTheme})`);
+        }
+        
+        // Theme switcher event listener
+        themeSwitcherBtn.addEventListener('click', () => {
+            const currentIndex = themes.findIndex(t => t.name === state.currentTheme);
+            const nextTheme = themes[(currentIndex + 1) % themes.length];
+            applyTheme(nextTheme.name);
+        });
+        
+        // Watch for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (state.currentTheme === 'auto') {
+                applyTheme('auto');
+            }
+        });
+        
+        // Cursor color picker
+        cursorColorPicker.addEventListener('input', (e) => {
+            state.cursorColor = e.target.value;
+            localStorage.setItem('cursor-color', state.cursorColor);
+            updateCursorColor();
+        });
+        
+        // Accent color picker
+        accentColorPicker.addEventListener('input', (e) => {
+            state.accentColor = e.target.value;
+            localStorage.setItem('accent-color', state.accentColor);
+            updateAccentColor();
+        });
+        
+        // Animation speed slider
+        animationSpeedSlider.addEventListener('input', (e) => {
+            state.animationSpeed = parseInt(e.target.value);
+            localStorage.setItem('animation-speed', state.animationSpeed);
+            updateAnimationSpeed();
+        });
+        
+        // --- 12. INITIALIZATION ---
+        function init() {
+            try {
+                // Setup custom cursor
+                setupCustomCursor();
+                document.body.classList.toggle('custom-cursor-active', state.isCursorActive);
+                
+                // Setup background animations
+                setupBackgroundAnimations();
+                
+                // Render the table
+                renderTable();
+                
+                // Create filter chips
+                createFilterChips();
+                
+                // Apply theme
+                applyTheme(state.currentTheme);
+                
+                // Update animation speed
+                updateAnimationSpeed();
+                
+                // Update cursor style icon
+                updateCursorStyleIcon(state.cursorStyle);
+                
+                // Set up resize handler for background animations
+                window.addEventListener('resize', () => {
+                    if (state.backgroundCleanup) {
+                        setupBackgroundAnimations();
+                    }
+                });
+                
+                // Set up print handling
+                window.addEventListener('beforeprint', () => {
+                    // Hide controls for printing
+                    document.querySelectorAll('.controls, .icon-button, #advanced-controls-panel').forEach(el => {
+                        el.style.display = 'none';
+                    });
+                });
+                
+                window.addEventListener('afterprint', () => {
+                    // Restore controls after printing
+                    document.querySelectorAll('.controls, .icon-button, #advanced-controls-panel').forEach(el => {
+                        el.style.display = '';
+                    });
+                });
+                
+                // Error boundaries for dynamic content
+                window.addEventListener('error', (event) => {
+                    console.error('Global error:', event);
+                    if (event.message.includes('THREE')) {
+                        alert('3D visualization failed to load. Please try refreshing the page.');
+                    }
+                }, true);
+                
+                console.log('Periodic Table application initialized successfully');
+            } catch (error) {
+                console.error('Initialization error:', error);
+                alert(`An error occurred while initializing the application: ${error.message}\nPlease refresh the page and try again.`);
+            }
+        }
+        
+        // Initialize the application
+        init();
+    });
+    </script>
+</body>
+</html>
